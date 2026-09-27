@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { StatusChip } from '../common/StatusChip';
 import { LiveTracker } from '../common/LiveTracker';
 import { 
-  Building2, Plus, Clock, MapPin, CheckCircle2, Eye 
+  Building2, Plus, Clock, MapPin, CheckCircle2, Eye, Award 
 } from 'lucide-react';
 import { SmartDonorRanking } from '../common/SmartDonorRanking';
 import { AutoEscalationWorkflow } from '../common/AutoEscalationWorkflow';
@@ -18,7 +18,7 @@ export const HospitalDashboard: React.FC = () => {
   const [confirmModalUnit, setConfirmModalUnit] = useState<string | null>(null);
 
   // Active requests
-  const hospitalRequests = requests.filter(r => r.requesterRole === 'hospital' || r.hospitalName?.includes('Apollo'));
+  const hospitalRequests = requests.filter(r => r.requesterRole === 'hospital' || r.hospitalName?.includes('Apollo') || r.isPriority);
   const activeRequest = requests.find(r => r.id === selectedRequestId) || hospitalRequests[0] || requests[0];
 
   const handleTransfusionConfirm = (unitCode: string) => {
@@ -131,7 +131,7 @@ export const HospitalDashboard: React.FC = () => {
               <tr>
                 <th>Case Ref</th>
                 <th>Component / Units</th>
-                <th>Urgency</th>
+                <th>Urgency & Priority</th>
                 <th>Assigned Provider</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -150,7 +150,15 @@ export const HospitalDashboard: React.FC = () => {
                     <strong style={{ color: req.bloodGroup === 'O-' ? '#E53935' : 'var(--primary-navy)' }}>{req.bloodGroup}</strong> ({req.units} Units {req.component})
                   </td>
                   <td>
-                    <span className={`urgency-badge ${req.urgency}`}>{req.urgency}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', alignItems: 'flex-start' }}>
+                      <span className={`urgency-badge ${req.urgency}`}>{req.urgency}</span>
+                      {req.isPriority && (
+                        <span className="priority-verified-donor-badge" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem' }}>
+                          <Award size={11} color="#D97706" />
+                          Priority Request — Verified Donor
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td>
                     {req.matchedDonorName ? (

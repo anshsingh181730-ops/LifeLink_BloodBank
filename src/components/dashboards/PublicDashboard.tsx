@@ -1,14 +1,36 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { BloodGroup } from '../../types';
-import { Activity, ShieldCheck, Heart, Clock, TrendingUp, MapPin, Calendar } from 'lucide-react';
+import { Activity, ShieldCheck, Heart, Clock, TrendingUp, MapPin, Calendar, ArrowRight, Compass } from 'lucide-react';
 import { SignInPortals } from '../common/SignInPortals';
+import { BloodReservesMapModal } from '../common/BloodReservesMapModal';
 
 export const PublicDashboard: React.FC = () => {
   const { bloodBanks, camps, setIsEmergencyModalOpen, switchRole, t } = useApp();
   const [selectedCity, setSelectedCity] = useState<string>('Delhi');
+  const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
+  const [activeLocationDetails, setActiveLocationDetails] = useState<{
+    name: string;
+    bankName?: string;
+    distanceKm?: number;
+    lat?: number;
+    lng?: number;
+    isGps?: boolean;
+  } | null>(null);
 
-  const filteredBanks = bloodBanks.filter(b => b.city.toLowerCase() === selectedCity.toLowerCase());
+  // Available unique cities across participating centers
+  const availableCities = Array.from(new Set(bloodBanks.map(b => b.city)));
+  if (!availableCities.includes(selectedCity)) {
+    availableCities.unshift(selectedCity);
+  }
+
+  const filteredBanks = bloodBanks.filter(b => 
+    b.city.toLowerCase() === selectedCity.toLowerCase() ||
+    (selectedCity.toLowerCase() === 'delhi' && (b.city.toLowerCase().includes('delhi') || b.city.toLowerCase() === 'delhi ncr'))
+  );
+
+  // Fallback to all or first banks if custom location outside standard city list
+  const effectiveBanks = filteredBanks.length > 0 ? filteredBanks : bloodBanks.slice(0, 2);
 
   // Aggregate stock for selected city
   const bloodGroups: BloodGroup[] = ['O-', 'O+', 'A-', 'A+', 'B-', 'B+', 'AB-', 'AB+'];
@@ -16,7 +38,7 @@ export const PublicDashboard: React.FC = () => {
     'O-': 0, 'O+': 0, 'A-': 0, 'A+': 0, 'B-': 0, 'B+': 0, 'AB-': 0, 'AB+': 0
   };
 
-  filteredBanks.forEach(bank => {
+  effectiveBanks.forEach(bank => {
     bloodGroups.forEach(bg => {
       aggregateStock[bg] += (bank.inventorySummary[bg] || 0);
     });
@@ -76,13 +98,103 @@ export const PublicDashboard: React.FC = () => {
               type="button"
               className="btn-secondary"
               style={{ fontSize: '0.95rem', padding: '0.8rem 1.8rem' }}
-              onClick={() => switchRole('donor')}
+              onClick={() => switchRole('patient')}
             >
               <Heart size={18} color="#0D47A1" />
               <span>{t.hero.registerAsDonor}</span>
             </button>
           </div>
+
+          {/* Anti-Fraud Security Notice & Direct Sign In Option */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.45rem',
+            marginTop: '1.25rem',
+            padding: '0.45rem 1.1rem',
+            background: 'rgba(13, 71, 161, 0.05)',
+            border: '1px solid rgba(13, 71, 161, 0.15)',
+            borderRadius: 'var(--radius-full)',
+            fontSize: '0.8rem',
+            color: 'var(--primary-navy)'
+          }}>
+            <ShieldCheck size={15} color="#0D47A1" />
+            <span>
+              <strong>Identity verification required:</strong> Sign in before requesting blood to prevent fake or harmful broadcasts.
+            </span>
+            <button
+              type="button"
+              onClick={() => switchRole('patient')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#2563EB',
+                fontWeight: 700,
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: '0 0.2rem',
+                fontSize: '0.8rem'
+              }}
+            >
+              Sign In to Portal
+            </button>
+          </div>
         </div>
+      </div>
+
+      {/* CHANGE 3: Donor Priority Landing Page Banner */}
+      <div 
+        id="landing-donor-priority-banner"
+        className="card" 
+        style={{
+          background: 'linear-gradient(90deg, #F0F7FF 0%, #FFFFFF 100%)',
+          border: '1px solid #BFDBFE',
+          borderLeft: '4px solid var(--secondary-blue)',
+          padding: '1rem 1.4rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '1rem',
+          boxShadow: '0 2px 8px rgba(41, 121, 255, 0.08)'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          <div style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '50%',
+            background: 'var(--secondary-blue-light)',
+            border: '1px solid var(--secondary-blue-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--primary-navy)',
+            flexShrink: 0
+          }}>
+            <Heart size={20} fill="#2979FF" color="#0D47A1" />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.94rem', color: 'var(--primary-navy)', lineHeight: '1.45' }}>
+              <strong>Are you a blood donor?</strong> Sign in with your donor account — if you've donated before and helped save a life, your own blood requests get priority matching.
+            </div>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              Verified lifesavers receive automated priority weighting and expedited multi-tier escalation.
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          id="btn-banner-donor-portal"
+          className="btn-primary"
+          style={{ fontSize: '0.82rem', padding: '0.5rem 1.15rem', background: '#0D47A1', whiteSpace: 'nowrap' }}
+          onClick={() => switchRole('patient')}
+        >
+          <span>Access Patient & Donor Portal</span>
+          <ArrowRight size={14} />
+        </button>
       </div>
 
       {/* Sign In Portal Selection Section */}
@@ -148,18 +260,88 @@ export const PublicDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* City Filter */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <MapPin size={16} color="var(--text-muted)" />
+          {/* City Filter & Interactive Location Map Trigger */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {activeLocationDetails && (
+              <span
+                style={{
+                  fontSize: '0.74rem',
+                  color: activeLocationDetails.isGps ? '#166534' : '#0D47A1',
+                  background: activeLocationDetails.isGps ? '#F0FDF4' : '#EFF6FF',
+                  border: activeLocationDetails.isGps ? '1px solid #BBF7D0' : '1px solid #BFDBFE',
+                  padding: '0.3rem 0.6rem',
+                  borderRadius: 'var(--radius-sm)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  fontWeight: 600,
+                  maxWidth: '220px',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}
+                title={`Active: ${activeLocationDetails.name} ${activeLocationDetails.distanceKm !== undefined ? `(${activeLocationDetails.distanceKm} km away)` : ''}`}
+              >
+                <Compass size={13} color={activeLocationDetails.isGps ? '#16A34A' : '#2563EB'} />
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {activeLocationDetails.name}
+                </span>
+                {activeLocationDetails.distanceKm !== undefined && (
+                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>
+                    ({activeLocationDetails.distanceKm}km)
+                  </span>
+                )}
+              </span>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setIsMapModalOpen(true)}
+              className="location-pin-btn"
+              title="Click to open interactive Google Maps view & auto-detect GPS location"
+              aria-label="Open Blood Centers Map & Detect Location"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                background: activeLocationDetails?.isGps ? '#F0FDF4' : '#FFFFFF',
+                border: activeLocationDetails?.isGps ? '1.5px solid #16A34A' : '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '0.38rem 0.65rem',
+                cursor: 'pointer',
+                color: activeLocationDetails?.isGps ? '#16A34A' : '#0D47A1',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                transition: 'all 0.15s ease',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.06)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#EFF6FF';
+                e.currentTarget.style.borderColor = '#93C5FD';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = activeLocationDetails?.isGps ? '#F0FDF4' : '#FFFFFF';
+                e.currentTarget.style.borderColor = activeLocationDetails?.isGps ? '1.5px solid #16A34A' : 'var(--border-subtle)';
+              }}
+            >
+              <MapPin size={16} color={activeLocationDetails?.isGps ? '#16A34A' : '#0D47A1'} />
+              <span>Map & GPS</span>
+            </button>
+
             <select
               className="form-select"
               value={selectedCity}
-              onChange={e => setSelectedCity(e.target.value)}
+              onChange={e => {
+                setSelectedCity(e.target.value);
+                setActiveLocationDetails(null);
+              }}
               style={{ width: 'auto', padding: '0.4rem 0.9rem', fontSize: '0.85rem' }}
             >
-              <option value="Delhi">Delhi NCR</option>
-              <option value="Mumbai">Mumbai</option>
-              <option value="Bengaluru">Bengaluru</option>
+              {availableCities.map(city => (
+                <option key={city} value={city}>
+                  {city === 'Delhi' ? 'Delhi NCR' : city}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -300,6 +482,20 @@ export const PublicDashboard: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Interactive Blood Reserves Map Modal (Google Maps Style) */}
+      <BloodReservesMapModal
+        isOpen={isMapModalOpen}
+        onClose={() => setIsMapModalOpen(false)}
+        bloodBanks={bloodBanks}
+        selectedCity={selectedCity}
+        onSelectLocation={(city, details) => {
+          setSelectedCity(city);
+          if (details) {
+            setActiveLocationDetails(details);
+          }
+        }}
+      />
     </div>
   );
 };

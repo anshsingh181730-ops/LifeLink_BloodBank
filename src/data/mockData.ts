@@ -134,6 +134,18 @@ export const INITIAL_DONOR_PROFILES: Record<string, DonorProfile> = {
     notificationRadiusKm: 20,
     urgencyThreshold: 'critical',
     simulatedAadhaarMasked: 'XXXX-XXXX-1355 (Simulated e-KYC)'
+  },
+  'usr-patient-1': {
+    userId: 'usr-patient-1',
+    bloodGroup: 'O+',
+    isAvailable: false,
+    lastDonationDate: '2026-01-01',
+    reliabilityScore: 0,
+    totalDonations: 0,
+    badges: [],
+    notificationRadiusKm: 15,
+    urgencyThreshold: 'standard',
+    simulatedAadhaarMasked: 'XXXX-XXXX-9281 (Simulated e-KYC)'
   }
 };
 
@@ -215,6 +227,266 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
       'B+': 45,
       'AB-': 3,
       'AB+': 22
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-mum-02',
+    name: 'Tata Memorial Centre Blood Bank',
+    license: 'CDSCO-LIC-MH-041',
+    city: 'Mumbai',
+    location: { address: 'Dr. E Borges Road, Parel, Mumbai', city: 'Mumbai', lat: 19.0041, lng: 72.8436 },
+    contactPhone: '+91 22 2417 7000',
+    operatingHours: '24x7 Oncology Blood Bank',
+    inventorySummary: {
+      'O-': 6,
+      'O+': 35,
+      'A-': 5,
+      'A+': 28,
+      'B-': 4,
+      'B+': 40,
+      'AB-': 3,
+      'AB+': 18
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-mum-03',
+    name: 'Shatabdi Hospital Municipal Blood Centre',
+    license: 'CDSCO-LIC-MH-055',
+    city: 'Mumbai',
+    location: { address: 'S.V. Road, Kandivali-Borivali West, Mumbai', city: 'Mumbai', lat: 19.2065, lng: 72.8495 },
+    contactPhone: '+91 22 2805 0100',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: {
+      'O-': 5,
+      'O+': 38,
+      'A-': 6,
+      'A+': 31,
+      'B-': 4,
+      'B+': 42,
+      'AB-': 2,
+      'AB+': 17
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-mum-04',
+    name: 'Dr. R. N. Cooper Municipal Hospital Blood Centre',
+    license: 'CDSCO-LIC-MH-063',
+    city: 'Mumbai',
+    location: { address: 'Gulmohar Road, Juhu-Andheri West, Mumbai', city: 'Mumbai', lat: 19.1080, lng: 72.8360 },
+    contactPhone: '+91 22 2620 7254',
+    operatingHours: '24x7 Trauma & Critical Care',
+    inventorySummary: {
+      'O-': 7,
+      'O+': 44,
+      'A-': 6,
+      'A+': 36,
+      'B-': 5,
+      'B+': 48,
+      'AB-': 3,
+      'AB+': 20
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-mum-05',
+    name: 'LTMG (Sion) Hospital Blood Bank',
+    license: 'CDSCO-LIC-MH-071',
+    city: 'Mumbai',
+    location: { address: 'Sion West, Mumbai', city: 'Mumbai', lat: 19.0368, lng: 72.8601 },
+    contactPhone: '+91 22 2407 6381',
+    operatingHours: '24x7 Apex Trauma Center',
+    inventorySummary: {
+      'O-': 8,
+      'O+': 52,
+      'A-': 7,
+      'A+': 42,
+      'B-': 6,
+      'B+': 56,
+      'AB-': 4,
+      'AB+': 24
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-blr-02',
+    name: 'Bowring and Lady Curzon Hospital Blood Centre',
+    license: 'CDSCO-LIC-KA-019',
+    city: 'Bengaluru',
+    location: { address: 'Lady Curzon Road, Shivajinagar, Bengaluru', city: 'Bengaluru', lat: 12.9815, lng: 77.6046 },
+    contactPhone: '+91 80 2559 1325',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: {
+      'O-': 4,
+      'O+': 36,
+      'A-': 6,
+      'A+': 32,
+      'B-': 3,
+      'B+': 39,
+      'AB-': 2,
+      'AB+': 16
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-kol-01',
+    name: 'Medical College & Hospital Central Blood Bank',
+    license: 'CDSCO-LIC-WB-003',
+    city: 'Kolkata',
+    location: { address: '88 College Street, Bowbazar, Kolkata', city: 'Kolkata', lat: 22.5744, lng: 88.3629 },
+    contactPhone: '+91 33 2255 1621',
+    operatingHours: '24x7 Critical Care',
+    inventorySummary: {
+      'O-': 7,
+      'O+': 48,
+      'A-': 8,
+      'A+': 41,
+      'B-': 5,
+      'B+': 55,
+      'AB-': 3,
+      'AB+': 24
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-che-01',
+    name: 'Rajiv Gandhi Government General Hospital Blood Bank',
+    license: 'CDSCO-LIC-TN-007',
+    city: 'Chennai',
+    location: { address: 'EVR Periyar Salai, Park Town, Chennai', city: 'Chennai', lat: 13.0805, lng: 80.2785 },
+    contactPhone: '+91 44 2530 5000',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: {
+      'O-': 5,
+      'O+': 44,
+      'A-': 7,
+      'A+': 39,
+      'B-': 6,
+      'B+': 52,
+      'AB-': 4,
+      'AB+': 20
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-hyd-01',
+    name: 'Osmania General Hospital Blood Bank',
+    license: 'CDSCO-LIC-TG-011',
+    city: 'Hyderabad',
+    location: { address: 'Afzal Gunj, Hyderabad', city: 'Hyderabad', lat: 17.3753, lng: 78.4744 },
+    contactPhone: '+91 40 2460 0121',
+    operatingHours: '24x7 Trauma Care',
+    inventorySummary: {
+      'O-': 4,
+      'O+': 50,
+      'A-': 6,
+      'A+': 43,
+      'B-': 5,
+      'B+': 58,
+      'AB-': 2,
+      'AB+': 25
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-pune-01',
+    name: 'Sassoon General Hospital Blood Bank',
+    license: 'CDSCO-LIC-MH-082',
+    city: 'Pune',
+    location: { address: 'Near Pune Railway Station, Pune', city: 'Pune', lat: 18.5255, lng: 73.8742 },
+    contactPhone: '+91 20 2612 8000',
+    operatingHours: '24x7 Regional Blood Centre',
+    inventorySummary: {
+      'O-': 6,
+      'O+': 38,
+      'A-': 5,
+      'A+': 34,
+      'B-': 4,
+      'B+': 44,
+      'AB-': 3,
+      'AB+': 19
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-jai-01',
+    name: 'Sawai Man Singh (SMS) Hospital Blood Centre',
+    license: 'CDSCO-LIC-RJ-005',
+    city: 'Jaipur',
+    location: { address: 'JLN Marg, Ashok Nagar, Jaipur', city: 'Jaipur', lat: 26.9054, lng: 75.8164 },
+    contactPhone: '+91 141 256 0291',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: {
+      'O-': 5,
+      'O+': 46,
+      'A-': 6,
+      'A+': 37,
+      'B-': 5,
+      'B+': 49,
+      'AB-': 3,
+      'AB+': 21
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-lko-01',
+    name: "King George's Medical University (KGMU) Blood Bank",
+    license: 'CDSCO-LIC-UP-018',
+    city: 'Lucknow',
+    location: { address: 'Shah Mina Road, Chowk, Lucknow', city: 'Lucknow', lat: 26.8687, lng: 80.9168 },
+    contactPhone: '+91 522 225 7540',
+    operatingHours: '24x7 Trauma & Critical Care',
+    inventorySummary: {
+      'O-': 4,
+      'O+': 40,
+      'A-': 5,
+      'A+': 35,
+      'B-': 6,
+      'B+': 48,
+      'AB-': 2,
+      'AB+': 20
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-ahm-01',
+    name: 'Civil Hospital Ahmedabad Blood Centre',
+    license: 'CDSCO-LIC-GJ-012',
+    city: 'Ahmedabad',
+    location: { address: 'Asarwa, Ahmedabad', city: 'Ahmedabad', lat: 23.0525, lng: 72.5991 },
+    contactPhone: '+91 79 2268 0074',
+    operatingHours: '24x7 State Transfusion Service',
+    inventorySummary: {
+      'O-': 5,
+      'O+': 42,
+      'A-': 6,
+      'A+': 36,
+      'B-': 4,
+      'B+': 46,
+      'AB-': 3,
+      'AB+': 22
+    },
+    status: 'active'
+  },
+  {
+    id: 'bb-chd-01',
+    name: 'PGIMER Rotary Central Blood Bank',
+    license: 'CDSCO-LIC-CH-002',
+    city: 'Chandigarh',
+    location: { address: 'Sector 12, Chandigarh', city: 'Chandigarh', lat: 30.7634, lng: 76.7770 },
+    contactPhone: '+91 172 275 6480',
+    operatingHours: '24x7 Apex Blood Centre',
+    inventorySummary: {
+      'O-': 7,
+      'O+': 45,
+      'A-': 7,
+      'A+': 40,
+      'B-': 5,
+      'B+': 50,
+      'AB-': 4,
+      'AB+': 23
     },
     status: 'active'
   }
@@ -310,6 +582,31 @@ export const INITIAL_REQUESTS: BloodRequest[] = [
     createdAt: '2026-09-22T10:10:00Z',
     updatedAt: '2026-09-22T10:25:00Z',
     notes: 'Dengue with severe thrombocytopenia. Platelet count below 15,000.'
+  },
+  {
+    id: 'req-003',
+    requesterId: 'usr-donor-1',
+    requesterName: 'Vikram Malhotra',
+    requesterRole: 'patient',
+    patientCaseId: 'CASE-MAX-EMG-304',
+    bloodGroup: 'O-',
+    component: 'Packed Red Blood Cells',
+    units: 1,
+    urgency: 'critical',
+    location: { address: 'Max Super Speciality Hospital, Saket', city: 'Delhi', lat: 28.5284, lng: 77.2114 },
+    hospitalName: 'Max Super Speciality Hospital',
+    status: 'notified',
+    currentTier: 1,
+    matchedDonorId: 'usr-donor-2',
+    matchedDonorName: 'Priya Nair',
+    matchedDonorPhone: '+91 98223 88441',
+    isPriority: true,
+    priorityReason: 'Verified Donor',
+    donorContributionScore: 98,
+    donorTotalDonations: 9,
+    createdAt: '2026-09-22T12:00:00Z',
+    updatedAt: '2026-09-22T12:05:00Z',
+    notes: 'Emergency unit requested by verified donor lifesaver. Priority matching active.'
   }
 ];
 

@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { RoleSimulator } from './RoleSimulator';
-import { Droplet, Languages, AlertCircle, Sparkles, Sun, Moon, ChevronDown, Check } from 'lucide-react';
+import { Droplet, Languages, AlertCircle, Sparkles, ChevronDown, Check } from 'lucide-react';
 import { SUPPORTED_LANGUAGES } from '../../services/i18n';
 
 export const Navbar: React.FC = () => {
-  const { currentLanguage, setLanguage, currentTheme, toggleTheme, setIsEmergencyModalOpen, t, switchRole } = useApp();
+  const { currentLanguage, setLanguage, setIsEmergencyModalOpen, t, switchRole } = useApp();
   const [isLangOpen, setIsLangOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
 
@@ -73,21 +73,6 @@ export const Navbar: React.FC = () => {
                 </div>
               )}
             </div>
-
-            {/* Theme Toggle Button (Sun / Moon) */}
-            <button
-              type="button"
-              className="theme-toggle-btn"
-              onClick={toggleTheme}
-              aria-label={currentTheme === 'dark' ? t.nav.themeToggleLight : t.nav.themeToggleDark}
-              title={currentTheme === 'dark' ? t.nav.themeToggleLight : t.nav.themeToggleDark}
-            >
-              {currentTheme === 'dark' ? (
-                <Sun size={17} className="theme-icon sun-icon" />
-              ) : (
-                <Moon size={17} className="theme-icon moon-icon" />
-              )}
-            </button>
 
             {/* Emergency SOS Button */}
             <button

@@ -4,8 +4,7 @@ import { Navbar } from './components/common/Navbar';
 import { AIChatbot } from './components/common/AIChatbot';
 import { EmergencyModal } from './components/common/EmergencyModal';
 import { PublicDashboard } from './components/dashboards/PublicDashboard';
-import { PatientDashboard } from './components/dashboards/PatientDashboard';
-import { DonorDashboard } from './components/dashboards/DonorDashboard';
+import { PatientDonorDashboard } from './components/dashboards/PatientDonorDashboard';
 import { HospitalDashboard } from './components/dashboards/HospitalDashboard';
 import { BloodBankDashboard } from './components/dashboards/BloodBankDashboard';
 import { NgoDashboard } from './components/dashboards/NgoDashboard';
@@ -50,9 +49,8 @@ const DashboardRenderer: React.FC = () => {
     case 'public':
       return <PublicDashboard />;
     case 'patient':
-      return <PatientDashboard />;
     case 'donor':
-      return <DonorDashboard />;
+      return <PatientDonorDashboard />;
     case 'hospital':
       return <HospitalDashboard />;
     case 'bloodbank':

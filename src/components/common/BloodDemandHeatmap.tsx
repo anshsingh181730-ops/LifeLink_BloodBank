@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useApp } from '../../context/AppContext';
+import L from 'leaflet';
 import { 
-  TrendingUp, MapPin, Sparkles, BarChart3 
+  TrendingUp, MapPin, Sparkles, BarChart3, Layers 
 } from 'lucide-react';
 
 interface ZoneDemandData {
@@ -14,7 +16,11 @@ interface ZoneDemandData {
 }
 
 export const BloodDemandHeatmap: React.FC = () => {
+  const { requests } = useApp();
   const [forecastHorizon, setForecastHorizon] = useState<'7d' | '30d'>('7d');
+
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
 
   const zones: ZoneDemandData[] = [
     {
@@ -95,6 +101,101 @@ export const BloodDemandHeatmap: React.FC = () => {
   const currentForecast = forecastHorizon === '7d' ? forecast7Days : forecast30Days;
   const maxForecastUnit = forecastHorizon === '7d' ? 80 : 450;
 
+  // Leaflet map initialization and real request plotting
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+
+    if (!mapInstanceRef.current) {
+      const map = L.map(mapContainerRef.current, {
+        center: [28.56, 77.24],
+        zoom: 11,
+        scrollWheelZoom: false
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18
+      }).addTo(map);
+
+      mapInstanceRef.current = map;
+    }
+
+    const map = mapInstanceRef.current;
+
+    // Remove existing markers/circles before re-drawing
+    map.eachLayer((layer) => {
+      if (layer instanceof L.Circle || layer instanceof L.CircleMarker || layer instanceof L.Marker) {
+        map.removeLayer(layer);
+      }
+    });
+
+    // Plot real blood requests from AppContext
+    const validRequests = requests.filter(r => r.location && typeof r.location.lat === 'number' && typeof r.location.lng === 'number');
+
+    validRequests.forEach((req) => {
+      const isCritical = req.urgency === 'critical';
+      const isUrgent = req.urgency === 'urgent';
+      const color = isCritical ? '#DC2626' : isUrgent ? '#EA580C' : '#2563EB';
+      const radiusMeters = isCritical ? 2500 : isUrgent ? 1800 : 1200;
+
+      // Real Request Density Bubble
+      const heatCircle = L.circle([req.location.lat, req.location.lng], {
+        color: color,
+        fillColor: color,
+        fillOpacity: 0.28,
+        radius: radiusMeters,
+        weight: 2
+      }).addTo(map);
+
+      // Core Request Pin
+      const pin = L.circleMarker([req.location.lat, req.location.lng], {
+        color: '#FFFFFF',
+        fillColor: color,
+        fillOpacity: 0.95,
+        radius: 8,
+        weight: 2
+      }).addTo(map);
+
+      const popupHtml = `
+        <div style="font-family: inherit; font-size: 12px; min-width: 170px;">
+          <div style="font-weight: 800; color: ${color}; text-transform: uppercase; font-size: 11px; margin-bottom: 3px;">
+            ● ${req.urgency} Urgency Demand
+          </div>
+          <strong style="color: #0F172A; font-size: 13px; display: block;">
+            ${req.units} Units of ${req.bloodGroup} (${req.component})
+          </strong>
+          <div style="margin-top: 5px; color: #475569; font-size: 11px; line-height: 1.4;">
+            🏥 <strong>${req.hospitalName || 'Emergency Center'}</strong><br/>
+            📍 ${req.location.address}<br/>
+            <span style="display: inline-block; margin-top: 4px; background: #F1F5F9; padding: 2px 6px; border-radius: 4px; font-weight: 600;">
+              Status: ${req.status.toUpperCase()}
+            </span>
+          </div>
+        </div>
+      `;
+
+      heatCircle.bindPopup(popupHtml);
+      pin.bindPopup(popupHtml);
+    });
+
+    // Auto-fit to active request coordinates
+    if (validRequests.length > 0) {
+      const bounds = L.latLngBounds(validRequests.map(r => [r.location.lat, r.location.lng]));
+      map.fitBounds(bounds, { padding: [45, 45], maxZoom: 13 });
+    }
+
+  }, [requests]);
+
+  // Clean up Leaflet on unmount
+  useEffect(() => {
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
   const getStatusBadge = (status: ZoneDemandData['status']) => {
     switch (status) {
       case 'critical':
@@ -156,7 +257,7 @@ export const BloodDemandHeatmap: React.FC = () => {
           </div>
 
           <div className="card-desc">
-            Geospatial demand heat matrix and multi-horizon demand forecasting modeled from trauma admissions and seasonal deficit patterns.
+            Geospatial demand heat matrix and multi-horizon demand forecasting plotted from real patient emergency coordinates and trauma admission patterns.
           </div>
         </div>
 
@@ -200,6 +301,56 @@ export const BloodDemandHeatmap: React.FC = () => {
           >
             Next 30 Days
           </button>
+        </div>
+      </div>
+
+      {/* Real Spatial Heatmap using Leaflet.js & OpenStreetMap (Section 4 Requirement) */}
+      <div style={{ marginBottom: '1.75rem' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+          marginBottom: '0.75rem'
+        }}>
+          <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--primary-navy)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Layers size={16} color="#2563EB" />
+            <span>Interactive Real Request Density Heatmap (Leaflet & OpenStreetMap)</span>
+          </div>
+
+          {/* Map Legend */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', fontSize: '0.74rem' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', color: '#DC2626' }}>
+              <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#DC2626', display: 'inline-block' }} />
+              Critical Shortage
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', color: '#EA580C' }}>
+              <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#EA580C', display: 'inline-block' }} />
+              Urgent Demand
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', color: '#2563EB' }}>
+              <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#2563EB', display: 'inline-block' }} />
+              Standard Request
+            </span>
+          </div>
+        </div>
+
+        {/* Leaflet DOM Container */}
+        <div 
+          ref={mapContainerRef}
+          style={{
+            width: '100%',
+            height: '360px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-subtle)',
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+            zIndex: 1
+          }}
+        />
+        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.35rem', textAlign: 'right' }}>
+          * Real request locations clustered and projected live onto OpenStreetMap tiles.
         </div>
       </div>
 
@@ -254,41 +405,49 @@ export const BloodDemandHeatmap: React.FC = () => {
                     </span>
                   </div>
 
-                  <div style={{
-                    background: '#F8FAFC',
-                    border: '1px solid #E2E8F0',
-                    borderRadius: 'var(--radius-sm)',
-                    padding: '0.5rem 0.75rem',
-                    margin: '0.6rem 0',
-                    fontSize: '0.8rem'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
-                      <span style={{ color: 'var(--text-muted)' }}>Projected Deficit:</span>
-                      <strong style={{ color: zone.projectedDeficitUnits < 0 ? '#DC2626' : '#16A34A' }}>
-                        {zone.projectedDeficitUnits > 0 ? `+${zone.projectedDeficitUnits}` : zone.projectedDeficitUnits} units ({zone.criticalBloodType})
-                      </strong>
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: 'var(--text-muted)' }}>Demand Index:</span>
-                      <strong style={{ color: 'var(--primary-navy)' }}>{zone.demandIndex} / 100</strong>
-                    </div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', margin: '0.75rem 0 0.35rem 0' }}>
+                    <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary-navy)' }}>
+                      {zone.demandIndex}
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>/100 Demand Index</span>
                   </div>
 
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                    • {zone.primaryCause}
-                  </p>
-                </div>
-
-                {/* Demand Heat Bar */}
-                <div style={{ marginTop: '0.85rem' }}>
-                  <div style={{ height: '6px', background: '#E2E8F0', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
+                  <div style={{
+                    width: '100%',
+                    height: '6px',
+                    background: '#E2E8F0',
+                    borderRadius: 'var(--radius-full)',
+                    overflow: 'hidden',
+                    marginBottom: '0.75rem'
+                  }}>
                     <div style={{
                       width: `${zone.demandIndex}%`,
                       height: '100%',
-                      background: zone.demandIndex >= 85 ? '#DC2626' : zone.demandIndex >= 60 ? '#D97706' : '#2563EB',
+                      background: zone.status === 'critical' ? '#DC2626' : zone.status === 'moderate' ? '#D97706' : '#2563EB',
                       borderRadius: 'var(--radius-full)'
                     }} />
+                  </div>
+                </div>
+
+                <div style={{
+                  paddingTop: '0.6rem',
+                  borderTop: '1px solid var(--border-subtle)',
+                  fontSize: '0.75rem'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Deficit Unit Projection:</span>
+                    <strong style={{ color: zone.projectedDeficitUnits < 0 ? '#DC2626' : '#059669' }}>
+                      {zone.projectedDeficitUnits > 0 ? `+${zone.projectedDeficitUnits}` : zone.projectedDeficitUnits} Units
+                    </strong>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Critical Need:</span>
+                    <strong style={{ color: 'var(--primary-navy)' }}>{zone.criticalBloodType}</strong>
+                  </div>
+
+                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.7rem', marginTop: '0.35rem', fontStyle: 'italic' }}>
+                    Trigger: {zone.primaryCause}
                   </div>
                 </div>
               </div>
@@ -297,95 +456,65 @@ export const BloodDemandHeatmap: React.FC = () => {
         </div>
       </div>
 
-      {/* Simple Forecast Chart: Expected Demand vs Typical Supply */}
-      <div style={{
-        background: '#F8FAFC',
-        border: '1px solid var(--border-subtle)',
-        borderRadius: 'var(--radius-md)',
-        padding: '1.25rem'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
-          <div>
-            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--primary-navy)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <BarChart3 size={16} color="#0D47A1" />
-              <span>Projected Clinical Demand vs Supply Timeline ({forecastHorizon === '7d' ? 'Next 7 Days' : 'Next 30 Days'})</span>
-            </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Comparing projected emergency transfusion requests against expected voluntary donations.
-            </div>
+      {/* Multi-Horizon Demand vs Supply Forecast Chart */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+          <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--primary-navy)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <BarChart3 size={16} color="#2563EB" />
+            <span>Demand vs Normal Voluntary Supply Trajectory ({forecastHorizon === '7d' ? 'Next 7 Days' : 'Next 30 Days'})</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.75rem' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <span style={{ width: 12, height: 12, background: '#DC2626', borderRadius: '2px', display: 'inline-block' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.74rem' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#DC2626' }}>
+              <span style={{ width: 10, height: 10, background: '#DC2626', display: 'inline-block', borderRadius: '2px' }} />
               Expected Demand
             </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <span style={{ width: 12, height: 12, background: '#0D47A1', borderRadius: '2px', display: 'inline-block' }} />
-              Typical Supply
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#2563EB' }}>
+              <span style={{ width: 10, height: 10, background: '#2563EB', display: 'inline-block', borderRadius: '2px' }} />
+              Projected Regular Supply
             </span>
           </div>
         </div>
 
-        {/* Visual Bar Comparison Grid */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        {/* Comparative Bars */}
+        <div style={{
+          background: '#F8FAFC',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 'var(--radius-md)',
+          padding: '1.25rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem'
+        }}>
           {currentForecast.map((point) => {
-            const demandPct = Math.round((point.demand / maxForecastUnit) * 100);
-            const supplyPct = Math.round((point.supply / maxForecastUnit) * 100);
-            const isDeficit = point.demand > point.supply;
+            const demandPct = Math.min(100, (point.demand / maxForecastUnit) * 100);
+            const supplyPct = Math.min(100, (point.supply / maxForecastUnit) * 100);
+            const deficit = point.demand - point.supply;
 
             return (
-              <div key={point.label} style={{ fontSize: '0.8rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>{point.label}</strong>
-                  <span style={{ fontSize: '0.74rem', color: isDeficit ? '#DC2626' : '#16A34A', fontWeight: 700 }}>
-                    {isDeficit ? `Deficit: -${point.demand - point.supply} units` : `Surplus: +${point.supply - point.demand} units`}
+              <div key={point.label}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '0.3rem' }}>
+                  <span style={{ fontWeight: 700, color: 'var(--primary-navy)' }}>{point.label}</span>
+                  <span style={{ fontSize: '0.74rem' }}>
+                    Demand: <strong style={{ color: '#DC2626' }}>{point.demand}u</strong> &nbsp;|&nbsp; 
+                    Supply: <strong style={{ color: '#2563EB' }}>{point.supply}u</strong> &nbsp;
+                    ({deficit > 0 ? <span style={{ color: '#DC2626', fontWeight: 800 }}>-{deficit}u deficit</span> : <span style={{ color: '#059669', fontWeight: 800 }}>+{Math.abs(deficit)}u surplus</span>})
                   </span>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                  {/* Demand Bar (Red) */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ width: '55px', fontSize: '0.7rem', color: '#DC2626', fontWeight: 700 }}>Demand</span>
-                    <div style={{ flex: 1, height: '10px', background: '#E2E8F0', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
-                      <div style={{ width: `${demandPct}%`, height: '100%', background: '#DC2626', borderRadius: 'var(--radius-full)' }} />
-                    </div>
-                    <span style={{ width: '45px', textAlign: 'right', fontSize: '0.75rem', fontWeight: 700, color: '#DC2626' }}>
-                      {point.demand}u
-                    </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                  {/* Demand Bar */}
+                  <div style={{ width: '100%', height: '8px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${demandPct}%`, height: '100%', background: '#DC2626', borderRadius: '4px' }} />
                   </div>
-
-                  {/* Supply Bar (Navy) */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ width: '55px', fontSize: '0.7rem', color: '#0D47A1', fontWeight: 700 }}>Supply</span>
-                    <div style={{ flex: 1, height: '10px', background: '#E2E8F0', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
-                      <div style={{ width: `${supplyPct}%`, height: '100%', background: '#0D47A1', borderRadius: 'var(--radius-full)' }} />
-                    </div>
-                    <span style={{ width: '45px', textAlign: 'right', fontSize: '0.75rem', fontWeight: 700, color: '#0D47A1' }}>
-                      {point.supply}u
-                    </span>
+                  {/* Supply Bar */}
+                  <div style={{ width: '100%', height: '8px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${supplyPct}%`, height: '100%', background: '#2563EB', borderRadius: '4px' }} />
                   </div>
                 </div>
               </div>
             );
           })}
-        </div>
-
-        {/* ML Strategic Recommendations */}
-        <div style={{
-          marginTop: '1.25rem',
-          paddingTop: '0.85rem',
-          borderTop: '1px solid var(--border-subtle)',
-          fontSize: '0.78rem',
-          color: 'var(--text-secondary)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem'
-        }}>
-          <Sparkles size={16} color="#D97706" style={{ flexShrink: 0 }} />
-          <span>
-            <strong>AI Allocation Advisory:</strong> Recommend initiating automated Tier-2 reservation transfers for <strong>O-Negative</strong> and scheduling emergency weekend donation drives in Gurugram Cyber City to counteract the Day 4–5 trauma deficit.
-          </span>
         </div>
       </div>
     </div>

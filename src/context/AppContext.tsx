@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   Role, User, DonorProfile, BloodRequest, BloodBank, BloodUnit, 
-  Camp, ImpactNotification, AuditLogEntry, SlaConfig, BloodGroup, BloodComponent, UrgencyLevel, UnitStatus 
+  Camp, ImpactNotification, AuditLogEntry, SlaConfig, BloodGroup, BloodComponent, UrgencyLevel, UnitStatus, Location 
 } from '../types';
 import { 
   INITIAL_USERS, INITIAL_DONOR_PROFILES, INITIAL_BLOOD_BANKS, 
@@ -11,12 +11,7 @@ import { rankDonors, findNearbyBloodBanksWithStock } from '../services/matchingS
 import { AuditLogSimulator } from '../services/auditSim';
 import { Language, translations, TranslationSchema } from '../services/i18n';
 
-export type Theme = 'light' | 'dark';
-
 interface AppContextType {
-  currentTheme: Theme;
-  toggleTheme: () => void;
-  setTheme: (theme: Theme) => void;
   currentRole: Role;
   currentUser: User;
   currentLanguage: Language;
@@ -53,18 +48,20 @@ interface AppContextType {
     patientCaseId?: string;
     hospitalName?: string;
     notes?: string;
+    locationSource?: 'browser' | 'manual' | 'default';
   }) => BloodRequest;
 
   acceptMatch: (requestId: string, donorId: string) => void;
   declineMatch: (requestId: string, donorId: string) => void;
   escalateRequest: (requestId: string) => void;
   confirmTransfusion: (unitCode: string, hospitalName: string) => void;
-  toggleDonorAvailability: (donorId: string) => void;
+  toggleDonorAvailability: (donorId: string, location?: Location) => void;
   addBloodUnit: (data: Omit<BloodUnit, 'id' | 'status'>) => BloodUnit;
   advanceUnitStatus: (unitId: string, nextStatus: UnitStatus) => void;
   scheduleCamp: (camp: Omit<Camp, 'id' | 'collectedUnits'>) => void;
   verifyInstitution: (userId: string, status: 'verified' | 'rejected') => void;
   loginWithGoogleUser: (role: Role, googleProfile: { email: string; name: string; picture?: string }) => void;
+  setActiveUser: (userId: string) => void;
   registerUser: (userData: {
     role: Role;
     name: string;
@@ -76,6 +73,7 @@ interface AppContextType {
     institutionName?: string;
     licenseNumber?: string;
     designation?: string;
+    isAvailableAsDonor?: boolean;
   }) => User;
 }
 
@@ -92,14 +90,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [impactNotifications, setImpactNotifications] = useState<ImpactNotification[]>(INITIAL_IMPACTS);
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(AuditLogSimulator.getLogs());
 
-  // Theme State with LocalStorage Persistence (default 'light')
-  const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('lifelink_theme') as Theme;
-      if (saved === 'dark' || saved === 'light') return saved;
+  // Clean up any legacy theme attributes & storage
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.removeItem('lifelink_theme');
     }
-    return 'light';
-  });
+  }, []);
 
   // Language State with LocalStorage Persistence (default 'en')
   const [currentLanguage, setCurrentLanguage] = useState<Language>(() => {
@@ -109,22 +106,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     return 'en';
   });
-
-  // Apply Theme Attribute to HTML Root
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-      localStorage.setItem('lifelink_theme', currentTheme);
-    }
-  }, [currentTheme]);
-
-  const toggleTheme = () => {
-    setCurrentTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
-
-  const setTheme = (theme: Theme) => {
-    setCurrentTheme(theme);
-  };
 
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [activeQrUnit, setActiveQrUnit] = useState<BloodUnit | null>(null);
@@ -136,13 +117,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     tier3BankAllocationSeconds: 120
   });
 
-  // Active current user matching currentRole
-  const currentUser = users.find(u => u.role === currentRole) || users[0];
+  // Selected active user ID for demo perspectives
+  const [selectedUserId, setSelectedUserId] = useState<string>('usr-donor-1');
+
+  // Active current user matching selectedUserId or currentRole
+  const currentUser = users.find(u => u.id === selectedUserId) || users.find(u => u.role === currentRole) || users[0];
+
+  const setActiveUser = (userId: string) => {
+    setSelectedUserId(userId);
+    const targetUser = users.find(u => u.id === userId);
+    if (targetUser) {
+      if (targetUser.role === 'donor') {
+        setCurrentRole('patient');
+      } else {
+        setCurrentRole(targetUser.role);
+      }
+    }
+  };
 
   const t = translations[currentLanguage] || translations['en'];
 
   const switchRole = (role: Role) => {
     setCurrentRole(role);
+    if (role === 'patient' || role === 'donor') {
+      if (selectedUserId !== 'usr-donor-1' && selectedUserId !== 'usr-patient-1') {
+        setSelectedUserId('usr-donor-1');
+      }
+    } else {
+      const roleUser = users.find(u => u.role === role);
+      if (roleUser) {
+        setSelectedUserId(roleUser.id);
+      }
+    }
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       document.documentElement.scrollTop = 0;
@@ -175,7 +181,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return prevUsers;
     });
 
-    setCurrentRole(role);
+    if (role === 'patient' || role === 'donor') {
+      setCurrentRole('patient');
+      setSelectedUserId('usr-donor-1');
+    } else {
+      setCurrentRole(role);
+      const targetUser = users.find(u => u.role === role);
+      if (targetUser) setSelectedUserId(targetUser.id);
+    }
+
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       document.documentElement.scrollTop = 0;
@@ -205,12 +219,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     institutionName?: string;
     licenseNumber?: string;
     designation?: string;
+    isAvailableAsDonor?: boolean;
   }): User => {
     const isInstitutional = userData.role === 'hospital' || userData.role === 'bloodbank' || userData.role === 'ngo';
+    const targetRole = (userData.role === 'donor' || userData.role === 'patient') ? 'patient' : userData.role;
     
     const newUser: User = {
-      id: `usr-${userData.role}-${Date.now().toString().slice(-4)}`,
-      role: userData.role,
+      id: `usr-${targetRole}-${Date.now().toString().slice(-4)}`,
+      role: targetRole,
       name: userData.name,
       phone: userData.phone,
       email: userData.email,
@@ -228,32 +244,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     setUsers(prevUsers => {
-      const filtered = prevUsers.filter(u => !(u.role === userData.role && u.email.toLowerCase() === userData.email.toLowerCase()));
+      const filtered = prevUsers.filter(u => !(u.role === targetRole && u.email.toLowerCase() === userData.email.toLowerCase()));
       return [...filtered, newUser];
     });
 
-    if (userData.role === 'donor') {
+    if (userData.role === 'patient' || userData.role === 'donor') {
+      const isAvailable = userData.isAvailableAsDonor !== undefined ? userData.isAvailableAsDonor : true;
       const newDonorProfile: DonorProfile = {
         userId: newUser.id,
         bloodGroup: userData.bloodGroup || 'O+',
-        isAvailable: true,
+        isAvailable,
         lastDonationDate: '2026-06-15',
-        reliabilityScore: 94,
-        totalDonations: 1,
-        badges: ['Bronze Donor', 'Registered Lifesaver'],
+        reliabilityScore: isAvailable ? 85 : 0,
+        totalDonations: 0,
+        badges: ['Registered Lifesaver'],
         notificationRadiusKm: 15,
         urgencyThreshold: 'standard',
-        simulatedAadhaarMasked: 'XXXX-XXXX-8921 (Simulated)'
+        simulatedAadhaarMasked: `XXXX-XXXX-${Date.now().toString().slice(-4)} (Simulated)`
       };
       setDonorProfiles(prev => ({
         ...prev,
-        [newUser.id]: newDonorProfile,
-        [currentUser.id]: newDonorProfile
+        [newUser.id]: newDonorProfile
       }));
     }
 
     if (!isInstitutional) {
-      setCurrentRole(userData.role);
+      setCurrentRole(targetRole);
+      setSelectedUserId(newUser.id);
       if (typeof window !== 'undefined') {
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         document.documentElement.scrollTop = 0;
@@ -262,17 +279,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       AuditLogSimulator.record(
         'portal-register',
         'Self-Service Portal Registration',
-        userData.role,
+        targetRole,
         'USER_REGISTRATION_SUCCESS',
         'User',
         newUser.email,
-        `New ${userData.role} registered: ${newUser.name} (${newUser.email}). Immediate access granted.`
+        `New ${targetRole} registered: ${newUser.name} (${newUser.email}). Immediate access granted.`
       );
     } else {
       AuditLogSimulator.record(
         'portal-register',
         'Institutional Registration Gateway',
-        userData.role,
+        targetRole,
         'INSTITUTIONAL_REGISTRATION_SUBMITTED',
         'Verification',
         newUser.email,
@@ -291,7 +308,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  // Create Request Action with Smart Matching
+  // Create Request Action with Smart Matching & Contribution-Based Priority Boost
   const createRequest = (data: {
     bloodGroup: BloodGroup;
     component: BloodComponent;
@@ -304,7 +321,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     patientCaseId?: string;
     hospitalName?: string;
     notes?: string;
+    locationSource?: 'browser' | 'manual' | 'default';
   }): BloodRequest => {
+    // Check requesting user's own donor contribution history
+    const userDonorProfile = donorProfiles[currentUser.id];
+    const hasDonationHistory = !!(userDonorProfile && userDonorProfile.totalDonations > 0);
+    const donorScore = userDonorProfile?.reliabilityScore || 0;
+    const totalDonations = userDonorProfile?.totalDonations || 0;
+
     const newId = `req-${Date.now()}`;
     const newRequest: BloodRequest = {
       id: newId,
@@ -320,24 +344,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         address: data.address,
         city: data.city,
         lat: data.lat,
-        lng: data.lng
+        lng: data.lng,
+        source: data.locationSource || 'manual'
       },
       hospitalName: data.hospitalName || 'Emergency Referral',
       status: 'matching',
       currentTier: 1,
+      isPriority: hasDonationHistory,
+      priorityReason: hasDonationHistory ? 'Verified Donor' : undefined,
+      donorContributionScore: hasDonationHistory ? donorScore : undefined,
+      donorTotalDonations: hasDonationHistory ? totalDonations : undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       notes: data.notes
     };
 
-    // Prepare candidate donors
+    // Prepare candidate donors (excluding requester themselves)
     const donorPairs = Object.values(donorProfiles).map(p => {
       const user = users.find(u => u.id === p.userId)!;
       return { user, profile: p };
-    }).filter(pair => pair.user);
+    }).filter(pair => pair.user && pair.user.id !== currentUser.id);
 
-    // Run Smart Matching Engine
-    const matches = rankDonors(data.bloodGroup, data.component, data.lat, data.lng, donorPairs);
+    // Run Smart Matching Engine with priority boost applied if verified donor
+    const matches = rankDonors(
+      data.bloodGroup, 
+      data.component, 
+      data.lat, 
+      data.lng, 
+      donorPairs,
+      hasDonationHistory,
+      donorScore
+    );
 
     if (matches.length > 0) {
       newRequest.status = 'notified';
@@ -366,7 +403,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       'CREATE_BLOOD_REQUEST',
       'Request',
       newId,
-      `Raised ${data.urgency.toUpperCase()} request for ${data.units} units of ${data.bloodGroup} ${data.component}. Matched with ${newRequest.matchedDonorName || newRequest.matchedBankName || 'Broadcasting'}`,
+      `Raised ${data.urgency.toUpperCase()} request for ${data.units} units of ${data.bloodGroup} ${data.component}.${hasDonationHistory ? ` [PRIORITY GRANTED — Verified Donor with ${totalDonations} donations (${donorScore}% score)]` : ''} Matched with ${newRequest.matchedDonorName || newRequest.matchedBankName || 'Broadcasting'}`,
       'none',
       newRequest.status
     );
@@ -536,11 +573,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setAuditLogs(AuditLogSimulator.getLogs());
   };
 
-  // Toggle donor availability
-  const toggleDonorAvailability = (donorId: string) => {
+  // Toggle donor availability with optional real location capture
+  const toggleDonorAvailability = (donorId: string, location?: Location) => {
     setDonorProfiles(prev => {
       const p = prev[donorId];
-      if (!p) return prev;
+      if (!p) {
+        const targetUser = users.find(u => u.id === donorId);
+        const newProf: DonorProfile = {
+          userId: donorId,
+          bloodGroup: 'O+',
+          isAvailable: true,
+          lastDonationDate: '2026-06-15',
+          reliabilityScore: 85,
+          totalDonations: 0,
+          badges: ['Registered Lifesaver'],
+          notificationRadiusKm: 15,
+          urgencyThreshold: 'standard',
+          simulatedAadhaarMasked: 'XXXX-XXXX-8821 (Simulated)',
+          currentLocation: location,
+          locationUpdatedAt: location ? new Date().toISOString() : undefined
+        };
+        AuditLogSimulator.record(
+          donorId,
+          targetUser ? targetUser.name : 'Donor',
+          'donor',
+          'TOGGLE_AVAILABILITY',
+          'User',
+          donorId,
+          `Donor availability initialized to Available${location ? ` at ${location.address}` : ''}`
+        );
+        return {
+          ...prev,
+          [donorId]: newProf
+        };
+      }
       const nextState = !p.isAvailable;
       AuditLogSimulator.record(
         donorId,
@@ -549,13 +615,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         'TOGGLE_AVAILABILITY',
         'User',
         donorId,
-        `Donor availability updated to ${nextState ? 'Available' : 'Unavailable'}`
+        `Donor availability updated to ${nextState ? 'Available' : 'Unavailable'}${location ? ` at ${location.address}` : ''}`
       );
       return {
         ...prev,
-        [donorId]: { ...p, isAvailable: nextState }
+        [donorId]: { 
+          ...p, 
+          isAvailable: nextState,
+          currentLocation: location || p.currentLocation,
+          locationUpdatedAt: location ? new Date().toISOString() : p.locationUpdatedAt
+        }
       };
     });
+
+    if (location) {
+      setUsers(prev => prev.map(u => u.id === donorId ? { ...u, location } : u));
+    }
+
     setAuditLogs(AuditLogSimulator.getLogs());
   };
 
@@ -664,9 +740,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <AppContext.Provider
       value={{
-        currentTheme,
-        toggleTheme,
-        setTheme,
         currentRole,
         currentUser,
         currentLanguage,
@@ -699,6 +772,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         scheduleCamp,
         verifyInstitution,
         loginWithGoogleUser,
+        setActiveUser,
         registerUser
       }}
     >

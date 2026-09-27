@@ -21,13 +21,16 @@ export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2
  * - Distance: 30% (Closer distance = higher score, scaled up to 35km)
  * - Reliability Score: 20% (Donor historical reliability 0-100)
  * - Eligibility Gap: 10% (Time elapsed since cooldown)
+ * - Donor Priority Boost: Up to 20 pts when requester is a verified donor (higher contribution score = higher priority weight)
  */
 export function rankDonors(
   recipientBloodGroup: BloodGroup,
   component: BloodComponent,
   targetLat: number,
   targetLng: number,
-  donors: { user: User; profile: DonorProfile }[]
+  donors: { user: User; profile: DonorProfile }[],
+  isPriorityRequest: boolean = false,
+  donorContributionScore: number = 0
 ): MatchCandidate[] {
   const candidates: MatchCandidate[] = [];
 
@@ -42,8 +45,10 @@ export function rankDonors(
     const eligibility = checkDonorEligibility(profile.lastDonationDate, component);
     if (!eligibility.isEligible) continue;
 
-    // 4. Distance
-    const dist = calculateDistance(targetLat, targetLng, user.location.lat, user.location.lng);
+    // 4. Real Distance using Haversine formula
+    const donorLat = profile.currentLocation?.lat ?? user.location.lat;
+    const donorLng = profile.currentLocation?.lng ?? user.location.lng;
+    const dist = calculateDistance(targetLat, targetLng, donorLat, donorLng);
     if (dist > profile.notificationRadiusKm) continue; // outside donor's willing radius
 
     // Compatibility Score (40 pts max)
@@ -60,11 +65,14 @@ export function rankDonors(
     // Recency Score (10 pts max) - having longer recovery gap is better
     const recencyScore = Math.min(10, (eligibility.daysSinceLast / 180) * 10);
 
-    const totalRank = Math.round(compScore + distScore + relScore + recencyScore);
+    // Contribution-Based Priority Boost: Higher contribution score = higher priority weight
+    const priorityBoost = isPriorityRequest ? Math.round((donorContributionScore / 100) * 15 + 5) : 0;
 
-    // Determine Tier
+    const totalRank = Math.round(compScore + distScore + relScore + recencyScore + priorityBoost);
+
+    // Determine Tier (Priority requests grant 15km Tier-1 response window)
     let tier: 1 | 2 | 3 = 1;
-    if (dist <= 10) tier = 1; // Nearby
+    if (dist <= (isPriorityRequest ? 15 : 10)) tier = 1; // Nearby
     else if (dist <= 30) tier = 2; // City-wide
     else tier = 3; // Regional
 

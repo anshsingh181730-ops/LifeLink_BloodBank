@@ -29,6 +29,9 @@ export interface Location {
   city: string;
   lat: number;
   lng: number;
+  source?: 'browser' | 'manual' | 'default';
+  accuracy?: number; // accuracy in meters from GPS
+  timestamp?: number;
 }
 
 export interface User {
@@ -56,6 +59,8 @@ export interface DonorProfile {
   notificationRadiusKm: number;
   urgencyThreshold: UrgencyLevel;
   simulatedAadhaarMasked: string; // e.g. "XXXX-XXXX-4821 (Simulated)"
+  currentLocation?: Location;
+  locationUpdatedAt?: string;
 }
 
 export interface BloodRequest {
@@ -80,6 +85,10 @@ export interface BloodRequest {
   createdAt: string;
   updatedAt: string;
   notes?: string;
+  isPriority?: boolean;
+  priorityReason?: string;
+  donorContributionScore?: number;
+  donorTotalDonations?: number;
 }
 
 export interface MatchCandidate {

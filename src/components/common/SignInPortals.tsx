@@ -5,7 +5,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { 
   Users, Droplet, Activity, Building2, Sparkles, Shield, 
   ArrowRight, X, AlertTriangle, Clock, Mail, Key, Loader2,
-  User, Phone, MapPin, ShieldCheck 
+  User, Phone, MapPin, ShieldCheck, Heart 
 } from 'lucide-react';
 
 interface PortalCardConfig {
@@ -51,6 +51,7 @@ export const SignInPortals: React.FC = () => {
   const [orgNameInput, setOrgNameInput] = useState<string>('');
   const [licenseIdInput, setLicenseIdInput] = useState<string>('');
   const [designationInput, setDesignationInput] = useState<string>('');
+  const [isAvailableAsDonor, setIsAvailableAsDonor] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [adminAuthError, setAdminAuthError] = useState<string | null>(null);
 
@@ -61,32 +62,17 @@ export const SignInPortals: React.FC = () => {
 
   const portalCards: PortalCardConfig[] = [
     {
-      id: 'patient-portal',
+      id: 'patient-donor-portal',
       role: 'patient',
-      title: t.portals.patientTitle,
-      shortName: 'Patient',
-      description: t.portals.patientDesc,
+      title: t.portals.patientDonorTitle || 'Patient & Donor Portal',
+      shortName: 'Patient & Donor',
+      description: t.portals.patientDonorDesc || 'Raise urgent blood requests with donor priority matching, toggle donor availability, track real-time matches & eligibility.',
       statusLabel: t.portals.statusImmediate,
       statusType: 'immediate',
       iconColor: '#DC2626',
       iconBg: '#FEE2E2',
       iconBorder: '#FECACA',
       icon: <Users size={22} color="#DC2626" />,
-      hasGoogleOption: true,
-      defaultEmail: 'rahul.varma@example.com'
-    },
-    {
-      id: 'donor-portal',
-      role: 'donor',
-      title: t.portals.donorTitle,
-      shortName: 'Donor',
-      description: t.portals.donorDesc,
-      statusLabel: t.portals.statusImmediate,
-      statusType: 'immediate',
-      iconColor: '#DC2626',
-      iconBg: '#FEE2E2',
-      iconBorder: '#FECACA',
-      icon: <Droplet size={22} color="#DC2626" fill="#DC2626" />,
       hasGoogleOption: true,
       defaultEmail: 'vikram.m@example.com'
     },
@@ -273,6 +259,7 @@ export const SignInPortals: React.FC = () => {
     setOrgNameInput('');
     setLicenseIdInput('');
     setDesignationInput('');
+    setIsAvailableAsDonor(true);
   };
 
   const handleOpenRegisterModal = (card: PortalCardConfig) => {
@@ -287,8 +274,9 @@ export const SignInPortals: React.FC = () => {
     setConfirmPasswordInput('');
     setFullNameInput('');
     setPhoneInput('+91 98765 43210');
-    setBloodGroupInput(card.role === 'donor' ? 'O-' : 'O+');
+    setBloodGroupInput(card.role === 'donor' || card.id === 'patient-donor-portal' ? 'O-' : 'O+');
     setCityInput('Delhi NCR');
+    setIsAvailableAsDonor(true);
     setOrgNameInput(
       card.role === 'hospital' 
         ? 'Indraprastha Apollo Hospital' 
@@ -349,7 +337,8 @@ export const SignInPortals: React.FC = () => {
         phone: phoneInput || '+91 98765 43210',
         password: passwordInput,
         bloodGroup: bloodGroupInput,
-        city: cityInput || 'Delhi NCR'
+        city: cityInput || 'Delhi NCR',
+        isAvailableAsDonor
       });
 
       handleCloseModal();
@@ -846,40 +835,71 @@ export const SignInPortals: React.FC = () => {
 
                     {/* Patient & Blood Donor Specific Fields (Category A) */}
                     {(activeModalCard.role === 'patient' || activeModalCard.role === 'donor') && (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem' }}>
-                        <div className="form-group">
-                          <label className="form-label" htmlFor="reg-bloodgroup" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <Droplet size={13} color="#DC2626" />
-                            <span>{t.portals.bloodGroup}</span>
-                          </label>
-                          <select
-                            id="reg-bloodgroup"
-                            className="form-select"
-                            value={bloodGroupInput}
-                            onChange={(e) => setBloodGroupInput(e.target.value as BloodGroup)}
-                          >
-                            {bloodGroups.map((bg) => (
-                              <option key={bg} value={bg}>{bg}</option>
-                            ))}
-                          </select>
+                      <>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem' }}>
+                          <div className="form-group">
+                            <label className="form-label" htmlFor="reg-bloodgroup" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                              <Droplet size={13} color="#DC2626" />
+                              <span>{t.portals.bloodGroup}</span>
+                            </label>
+                            <select
+                              id="reg-bloodgroup"
+                              className="form-select"
+                              value={bloodGroupInput}
+                              onChange={(e) => setBloodGroupInput(e.target.value as BloodGroup)}
+                            >
+                              {bloodGroups.map((bg) => (
+                                <option key={bg} value={bg}>{bg}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="form-group">
+                            <label className="form-label" htmlFor="reg-city" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                              <MapPin size={13} color="var(--text-muted)" />
+                              <span>{t.portals.city}</span>
+                            </label>
+                            <input
+                              id="reg-city"
+                              type="text"
+                              required
+                              className="form-input"
+                              value={cityInput}
+                              onChange={(e) => setCityInput(e.target.value)}
+                              placeholder="e.g. South Delhi, Delhi NCR"
+                            />
+                          </div>
                         </div>
 
-                        <div className="form-group">
-                          <label className="form-label" htmlFor="reg-city" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <MapPin size={13} color="var(--text-muted)" />
-                            <span>{t.portals.city}</span>
-                          </label>
+                        {/* Unified Capability: Donor Availability Toggle on Registration */}
+                        <div style={{
+                          background: '#F0FDF4',
+                          border: '1px solid #BBF7D0',
+                          borderRadius: 'var(--radius-md)',
+                          padding: '0.75rem 1rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '0.75rem'
+                        }}>
+                          <div>
+                            <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#166534', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <Heart size={14} color="#16A34A" />
+                              <span>I am also available as a blood donor</span>
+                            </div>
+                            <span style={{ fontSize: '0.74rem', color: '#15803D', display: 'block', marginTop: '2px' }}>
+                              Receive nearby urgent alerts & unlock priority matching for your own blood requests.
+                            </span>
+                          </div>
                           <input
-                            id="reg-city"
-                            type="text"
-                            required
-                            className="form-input"
-                            value={cityInput}
-                            onChange={(e) => setCityInput(e.target.value)}
-                            placeholder="e.g. South Delhi, Delhi NCR"
+                            type="checkbox"
+                            id="reg-donor-available"
+                            checked={isAvailableAsDonor}
+                            onChange={(e) => setIsAvailableAsDonor(e.target.checked)}
+                            style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#16A34A' }}
                           />
                         </div>
-                      </div>
+                      </>
                     )}
 
                     {/* Hospital, Blood Bank & NGO Specific Fields (Category B) */}
