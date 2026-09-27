@@ -150,24 +150,18 @@ export const INITIAL_DONOR_PROFILES: Record<string, DonorProfile> = {
 };
 
 export const INITIAL_BLOOD_BANKS: BloodBank[] = [
+  // ==============================
+  // 1. DELHI NCR
+  // ==============================
   {
     id: 'bb-delhi-01',
     name: 'Red Cross Central Blood Bank',
     license: 'CDSCO-LIC-DL-001',
     city: 'Delhi',
-    location: { address: '1 Red Cross Road, Connaught Place', city: 'Delhi', lat: 28.6219, lng: 77.2088 },
+    location: { address: '1 Red Cross Road, Connaught Place, New Delhi', city: 'Delhi', lat: 28.6219, lng: 77.2088 },
     contactPhone: '+91 11 2371 6441',
     operatingHours: '24x7 Emergency Service',
-    inventorySummary: {
-      'O-': 4,
-      'O+': 28,
-      'A-': 6,
-      'A+': 34,
-      'B-': 3,
-      'B+': 41,
-      'AB-': 2,
-      'AB+': 19
-    },
+    inventorySummary: { 'O-': 4, 'O+': 28, 'A-': 6, 'A+': 34, 'B-': 3, 'B+': 41, 'AB-': 2, 'AB+': 19 },
     status: 'active'
   },
   {
@@ -178,56 +172,88 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'Ansari Nagar, New Delhi', city: 'Delhi', lat: 28.5672, lng: 77.2100 },
     contactPhone: '+91 11 2659 4444',
     operatingHours: '24x7 Critical Care',
-    inventorySummary: {
-      'O-': 8,
-      'O+': 52,
-      'A-': 9,
-      'A+': 45,
-      'B-': 5,
-      'B+': 62,
-      'AB-': 4,
-      'AB+': 27
-    },
+    inventorySummary: { 'O-': 8, 'O+': 52, 'A-': 9, 'A+': 45, 'B-': 5, 'B+': 62, 'AB-': 4, 'AB+': 27 },
     status: 'active'
   },
+  {
+    id: 'bb-delhi-03',
+    name: 'Safdarjung Hospital Blood Bank',
+    license: 'CDSCO-LIC-DL-022',
+    city: 'Delhi',
+    location: { address: 'Ring Road, Opposite AIIMS, New Delhi', city: 'Delhi', lat: 28.5684, lng: 77.2065 },
+    contactPhone: '+91 11 2616 5060',
+    operatingHours: '24x7 Trauma Service',
+    inventorySummary: { 'O-': 6, 'O+': 42, 'A-': 7, 'A+': 38, 'B-': 6, 'B+': 49, 'AB-': 3, 'AB+': 22 },
+    status: 'active'
+  },
+  {
+    id: 'bb-delhi-04',
+    name: 'Max Super Speciality Hospital Blood Centre',
+    license: 'CDSCO-LIC-DL-045',
+    city: 'Delhi',
+    location: { address: '1, 2 Press Enclave Road, Saket, New Delhi', city: 'Delhi', lat: 28.5273, lng: 77.2117 },
+    contactPhone: '+91 11 2651 5050',
+    operatingHours: '24x7 Service',
+    inventorySummary: { 'O-': 5, 'O+': 36, 'A-': 6, 'A+': 32, 'B-': 4, 'B+': 44, 'AB-': 2, 'AB+': 18 },
+    status: 'active'
+  },
+  {
+    id: 'bb-delhi-05',
+    name: 'Indraprastha Apollo Hospital Blood Bank',
+    license: 'CDSCO-LIC-DL-033',
+    city: 'Delhi',
+    location: { address: 'Sarita Vihar, Mathura Road, New Delhi', city: 'Delhi', lat: 28.5355, lng: 77.2910 },
+    contactPhone: '+91 11 2692 5858',
+    operatingHours: '24x7 Critical Care',
+    inventorySummary: { 'O-': 7, 'O+': 44, 'A-': 8, 'A+': 40, 'B-': 5, 'B+': 53, 'AB-': 4, 'AB+': 21 },
+    status: 'active'
+  },
+  {
+    id: 'bb-delhi-06',
+    name: 'Sir Ganga Ram Hospital Blood Bank',
+    license: 'CDSCO-LIC-DL-019',
+    city: 'Delhi',
+    location: { address: 'Rajinder Nagar, New Delhi', city: 'Delhi', lat: 28.6385, lng: 77.1895 },
+    contactPhone: '+91 11 2575 0000',
+    operatingHours: '24x7 Apex Transfusion',
+    inventorySummary: { 'O-': 6, 'O+': 39, 'A-': 7, 'A+': 35, 'B-': 5, 'B+': 47, 'AB-': 3, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-delhi-07',
+    name: 'Fortis Memorial Research Institute Blood Bank',
+    license: 'CDSCO-LIC-HR-012',
+    city: 'Delhi',
+    location: { address: 'Sector 44, Gurugram, Delhi NCR', city: 'Delhi', lat: 28.4595, lng: 77.0725 },
+    contactPhone: '+91 124 496 2200',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 5, 'O+': 35, 'A-': 5, 'A+': 30, 'B-': 4, 'B+': 42, 'AB-': 3, 'AB+': 17 },
+    status: 'active'
+  },
+  {
+    id: 'bb-delhi-08',
+    name: 'Jaypee Hospital Blood Centre',
+    license: 'CDSCO-LIC-UP-029',
+    city: 'Delhi',
+    location: { address: 'Sector 128, Wish Town, Noida, Delhi NCR', city: 'Delhi', lat: 28.5135, lng: 77.3712 },
+    contactPhone: '+91 120 412 2222',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 4, 'O+': 32, 'A-': 6, 'A+': 28, 'B-': 4, 'B+': 39, 'AB-': 2, 'AB+': 16 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 2. MUMBAI & MMR
+  // ==============================
   {
     id: 'bb-mum-01',
     name: 'KEM Hospital Blood Centre',
     license: 'CDSCO-LIC-MH-029',
     city: 'Mumbai',
-    location: { address: 'Parel, Mumbai', city: 'Mumbai', lat: 19.0028, lng: 72.8427 },
+    location: { address: 'Acharya Donde Marg, Parel, Mumbai', city: 'Mumbai', lat: 19.0028, lng: 72.8427 },
     contactPhone: '+91 22 2410 7000',
-    operatingHours: '24x7 Emergency',
-    inventorySummary: {
-      'O-': 2,
-      'O+': 30,
-      'A-': 4,
-      'A+': 25,
-      'B-': 3,
-      'B+': 38,
-      'AB-': 1,
-      'AB+': 15
-    },
-    status: 'active'
-  },
-  {
-    id: 'bb-blr-01',
-    name: 'Victoria Hospital Rotary Blood Bank',
-    license: 'CDSCO-LIC-KA-008',
-    city: 'Bengaluru',
-    location: { address: 'Kalasipalya, Bengaluru', city: 'Bengaluru', lat: 12.9647, lng: 77.5760 },
-    contactPhone: '+91 80 2670 1150',
-    operatingHours: '24x7 Service',
-    inventorySummary: {
-      'O-': 5,
-      'O+': 42,
-      'A-': 7,
-      'A+': 38,
-      'B-': 4,
-      'B+': 45,
-      'AB-': 3,
-      'AB+': 22
-    },
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 2, 'O+': 30, 'A-': 4, 'A+': 25, 'B-': 3, 'B+': 38, 'AB-': 1, 'AB+': 15 },
     status: 'active'
   },
   {
@@ -238,16 +264,7 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'Dr. E Borges Road, Parel, Mumbai', city: 'Mumbai', lat: 19.0041, lng: 72.8436 },
     contactPhone: '+91 22 2417 7000',
     operatingHours: '24x7 Oncology Blood Bank',
-    inventorySummary: {
-      'O-': 6,
-      'O+': 35,
-      'A-': 5,
-      'A+': 28,
-      'B-': 4,
-      'B+': 40,
-      'AB-': 3,
-      'AB+': 18
-    },
+    inventorySummary: { 'O-': 6, 'O+': 35, 'A-': 5, 'A+': 28, 'B-': 4, 'B+': 40, 'AB-': 3, 'AB+': 18 },
     status: 'active'
   },
   {
@@ -258,16 +275,7 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'S.V. Road, Kandivali-Borivali West, Mumbai', city: 'Mumbai', lat: 19.2065, lng: 72.8495 },
     contactPhone: '+91 22 2805 0100',
     operatingHours: '24x7 Emergency Service',
-    inventorySummary: {
-      'O-': 5,
-      'O+': 38,
-      'A-': 6,
-      'A+': 31,
-      'B-': 4,
-      'B+': 42,
-      'AB-': 2,
-      'AB+': 17
-    },
+    inventorySummary: { 'O-': 5, 'O+': 38, 'A-': 6, 'A+': 31, 'B-': 4, 'B+': 42, 'AB-': 2, 'AB+': 17 },
     status: 'active'
   },
   {
@@ -278,16 +286,7 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'Gulmohar Road, Juhu-Andheri West, Mumbai', city: 'Mumbai', lat: 19.1080, lng: 72.8360 },
     contactPhone: '+91 22 2620 7254',
     operatingHours: '24x7 Trauma & Critical Care',
-    inventorySummary: {
-      'O-': 7,
-      'O+': 44,
-      'A-': 6,
-      'A+': 36,
-      'B-': 5,
-      'B+': 48,
-      'AB-': 3,
-      'AB+': 20
-    },
+    inventorySummary: { 'O-': 7, 'O+': 44, 'A-': 6, 'A+': 36, 'B-': 5, 'B+': 48, 'AB-': 3, 'AB+': 20 },
     status: 'active'
   },
   {
@@ -298,16 +297,66 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'Sion West, Mumbai', city: 'Mumbai', lat: 19.0368, lng: 72.8601 },
     contactPhone: '+91 22 2407 6381',
     operatingHours: '24x7 Apex Trauma Center',
-    inventorySummary: {
-      'O-': 8,
-      'O+': 52,
-      'A-': 7,
-      'A+': 42,
-      'B-': 6,
-      'B+': 56,
-      'AB-': 4,
-      'AB+': 24
-    },
+    inventorySummary: { 'O-': 8, 'O+': 52, 'A-': 7, 'A+': 42, 'B-': 6, 'B+': 56, 'AB-': 4, 'AB+': 24 },
+    status: 'active'
+  },
+  {
+    id: 'bb-mum-06',
+    name: 'Lilavati Hospital & Research Centre Blood Bank',
+    license: 'CDSCO-LIC-MH-088',
+    city: 'Mumbai',
+    location: { address: 'A-791, Bandra Reclamation, Bandra West, Mumbai', city: 'Mumbai', lat: 19.0514, lng: 72.8295 },
+    contactPhone: '+91 22 2675 1000',
+    operatingHours: '24x7 Service',
+    inventorySummary: { 'O-': 5, 'O+': 36, 'A-': 5, 'A+': 30, 'B-': 4, 'B+': 40, 'AB-': 2, 'AB+': 19 },
+    status: 'active'
+  },
+  {
+    id: 'bb-mum-07',
+    name: 'Kokilaben Dhirubhai Ambani Hospital Blood Centre',
+    license: 'CDSCO-LIC-MH-094',
+    city: 'Mumbai',
+    location: { address: 'Rao Saheb Achutrao Patwardhan Marg, Four Bungalows, Andheri West, Mumbai', city: 'Mumbai', lat: 19.1314, lng: 72.8252 },
+    contactPhone: '+91 22 4269 6969',
+    operatingHours: '24x7 Critical Care',
+    inventorySummary: { 'O-': 6, 'O+': 40, 'A-': 6, 'A+': 34, 'B-': 5, 'B+': 45, 'AB-': 3, 'AB+': 21 },
+    status: 'active'
+  },
+  {
+    id: 'bb-mum-08',
+    name: 'D.Y. Patil Hospital Blood Centre',
+    license: 'CDSCO-LIC-MH-102',
+    city: 'Mumbai',
+    location: { address: 'Sector 5, Nerul, Navi Mumbai', city: 'Mumbai', lat: 19.0435, lng: 73.0238 },
+    contactPhone: '+91 22 3921 5999',
+    operatingHours: '24x7 Regional Blood Centre',
+    inventorySummary: { 'O-': 4, 'O+': 35, 'A-': 5, 'A+': 29, 'B-': 4, 'B+': 38, 'AB-': 2, 'AB+': 16 },
+    status: 'active'
+  },
+  {
+    id: 'bb-mum-09',
+    name: 'Chhatrapati Shivaji Maharaj Hospital Blood Bank',
+    license: 'CDSCO-LIC-MH-116',
+    city: 'Mumbai',
+    location: { address: 'Belapur Road, Kalwa, Thane', city: 'Mumbai', lat: 19.1983, lng: 72.9981 },
+    contactPhone: '+91 22 2537 2041',
+    operatingHours: '24x7 Trauma Service',
+    inventorySummary: { 'O-': 5, 'O+': 37, 'A-': 6, 'A+': 32, 'B-': 5, 'B+': 43, 'AB-': 3, 'AB+': 18 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 3. BENGALURU
+  // ==============================
+  {
+    id: 'bb-blr-01',
+    name: 'Victoria Hospital Rotary Blood Bank',
+    license: 'CDSCO-LIC-KA-008',
+    city: 'Bengaluru',
+    location: { address: 'Fort, Kalasipalya, Bengaluru', city: 'Bengaluru', lat: 12.9647, lng: 77.5760 },
+    contactPhone: '+91 80 2670 1150',
+    operatingHours: '24x7 Service',
+    inventorySummary: { 'O-': 5, 'O+': 42, 'A-': 7, 'A+': 38, 'B-': 4, 'B+': 45, 'AB-': 3, 'AB+': 22 },
     status: 'active'
   },
   {
@@ -318,18 +367,57 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'Lady Curzon Road, Shivajinagar, Bengaluru', city: 'Bengaluru', lat: 12.9815, lng: 77.6046 },
     contactPhone: '+91 80 2559 1325',
     operatingHours: '24x7 Emergency Service',
-    inventorySummary: {
-      'O-': 4,
-      'O+': 36,
-      'A-': 6,
-      'A+': 32,
-      'B-': 3,
-      'B+': 39,
-      'AB-': 2,
-      'AB+': 16
-    },
+    inventorySummary: { 'O-': 4, 'O+': 36, 'A-': 6, 'A+': 32, 'B-': 3, 'B+': 39, 'AB-': 2, 'AB+': 16 },
     status: 'active'
   },
+  {
+    id: 'bb-blr-03',
+    name: 'NIMHANS Central Blood Bank',
+    license: 'CDSCO-LIC-KA-024',
+    city: 'Bengaluru',
+    location: { address: 'Hosur Road, Lakkasandra, Bengaluru', city: 'Bengaluru', lat: 12.9392, lng: 77.5937 },
+    contactPhone: '+91 80 2699 5000',
+    operatingHours: '24x7 Neuro & Trauma Service',
+    inventorySummary: { 'O-': 6, 'O+': 45, 'A-': 7, 'A+': 39, 'B-': 5, 'B+': 48, 'AB-': 4, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-blr-04',
+    name: 'Manipal Hospital Blood Centre',
+    license: 'CDSCO-LIC-KA-038',
+    city: 'Bengaluru',
+    location: { address: '98 HAL Old Airport Road, Kodihalli, Bengaluru', city: 'Bengaluru', lat: 12.9587, lng: 77.6508 },
+    contactPhone: '+91 80 2502 4444',
+    operatingHours: '24x7 Tertiary Care',
+    inventorySummary: { 'O-': 7, 'O+': 48, 'A-': 8, 'A+': 42, 'B-': 6, 'B+': 52, 'AB-': 3, 'AB+': 24 },
+    status: 'active'
+  },
+  {
+    id: 'bb-blr-05',
+    name: 'Narayana Health City Blood Centre',
+    license: 'CDSCO-LIC-KA-052',
+    city: 'Bengaluru',
+    location: { address: '258/A, Bommasandra Industrial Area, Anekal Taluk, Bengaluru', city: 'Bengaluru', lat: 12.8093, lng: 77.6974 },
+    contactPhone: '+91 80 7122 2222',
+    operatingHours: '24x7 Cardiac & Trauma',
+    inventorySummary: { 'O-': 8, 'O+': 54, 'A-': 8, 'A+': 46, 'B-': 6, 'B+': 58, 'AB-': 5, 'AB+': 26 },
+    status: 'active'
+  },
+  {
+    id: 'bb-blr-06',
+    name: "St. John's Medical College Hospital Blood Bank",
+    license: 'CDSCO-LIC-KA-044',
+    city: 'Bengaluru',
+    location: { address: 'Sarjapur Road, John Nagar, Koramangala, Bengaluru', city: 'Bengaluru', lat: 12.9318, lng: 77.6206 },
+    contactPhone: '+91 80 2206 5000',
+    operatingHours: '24x7 Critical Transfusion',
+    inventorySummary: { 'O-': 6, 'O+': 40, 'A-': 6, 'A+': 35, 'B-': 5, 'B+': 46, 'AB-': 3, 'AB+': 21 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 4. KOLKATA
+  // ==============================
   {
     id: 'bb-kol-01',
     name: 'Medical College & Hospital Central Blood Bank',
@@ -338,18 +426,57 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: '88 College Street, Bowbazar, Kolkata', city: 'Kolkata', lat: 22.5744, lng: 88.3629 },
     contactPhone: '+91 33 2255 1621',
     operatingHours: '24x7 Critical Care',
-    inventorySummary: {
-      'O-': 7,
-      'O+': 48,
-      'A-': 8,
-      'A+': 41,
-      'B-': 5,
-      'B+': 55,
-      'AB-': 3,
-      'AB+': 24
-    },
+    inventorySummary: { 'O-': 7, 'O+': 48, 'A-': 8, 'A+': 41, 'B-': 5, 'B+': 55, 'AB-': 3, 'AB+': 24 },
     status: 'active'
   },
+  {
+    id: 'bb-kol-02',
+    name: 'SSKM Hospital Blood Transfusion Unit (IPGMER)',
+    license: 'CDSCO-LIC-WB-011',
+    city: 'Kolkata',
+    location: { address: '244 AJC Bose Road, Bhowanipore, Kolkata', city: 'Kolkata', lat: 22.5392, lng: 88.3426 },
+    contactPhone: '+91 33 2223 1589',
+    operatingHours: '24x7 Apex Transfusion',
+    inventorySummary: { 'O-': 8, 'O+': 55, 'A-': 9, 'A+': 46, 'B-': 6, 'B+': 62, 'AB-': 4, 'AB+': 28 },
+    status: 'active'
+  },
+  {
+    id: 'bb-kol-03',
+    name: 'NRS Medical College Blood Centre',
+    license: 'CDSCO-LIC-WB-019',
+    city: 'Kolkata',
+    location: { address: '138 AJC Bose Road, Sealdah, Kolkata', city: 'Kolkata', lat: 22.5647, lng: 88.3712 },
+    contactPhone: '+91 33 2286 0033',
+    operatingHours: '24x7 Trauma & Emergency',
+    inventorySummary: { 'O-': 5, 'O+': 42, 'A-': 7, 'A+': 37, 'B-': 5, 'B+': 50, 'AB-': 3, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-kol-04',
+    name: 'R.G. Kar Medical College Blood Bank',
+    license: 'CDSCO-LIC-WB-025',
+    city: 'Kolkata',
+    location: { address: '1 Khudiram Bose Sarani, Shyambazar, Kolkata', city: 'Kolkata', lat: 22.6045, lng: 88.3742 },
+    contactPhone: '+91 33 2555 7656',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 6, 'O+': 40, 'A-': 6, 'A+': 35, 'B-': 6, 'B+': 48, 'AB-': 2, 'AB+': 19 },
+    status: 'active'
+  },
+  {
+    id: 'bb-kol-05',
+    name: 'Chittaranjan National Cancer Institute (CNCI) Blood Centre',
+    license: 'CDSCO-LIC-WB-037',
+    city: 'Kolkata',
+    location: { address: 'Street No. 299, Action Area I, New Town, Kolkata', city: 'Kolkata', lat: 22.5786, lng: 88.4682 },
+    contactPhone: '+91 33 2324 5015',
+    operatingHours: '24x7 Oncology Blood Transfusion',
+    inventorySummary: { 'O-': 5, 'O+': 36, 'A-': 6, 'A+': 31, 'B-': 4, 'B+': 42, 'AB-': 3, 'AB+': 17 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 5. CHENNAI
+  // ==============================
   {
     id: 'bb-che-01',
     name: 'Rajiv Gandhi Government General Hospital Blood Bank',
@@ -358,18 +485,57 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'EVR Periyar Salai, Park Town, Chennai', city: 'Chennai', lat: 13.0805, lng: 80.2785 },
     contactPhone: '+91 44 2530 5000',
     operatingHours: '24x7 Emergency Service',
-    inventorySummary: {
-      'O-': 5,
-      'O+': 44,
-      'A-': 7,
-      'A+': 39,
-      'B-': 6,
-      'B+': 52,
-      'AB-': 4,
-      'AB+': 20
-    },
+    inventorySummary: { 'O-': 5, 'O+': 44, 'A-': 7, 'A+': 39, 'B-': 6, 'B+': 52, 'AB-': 4, 'AB+': 20 },
     status: 'active'
   },
+  {
+    id: 'bb-che-02',
+    name: 'Government Stanley Medical College Hospital Blood Bank',
+    license: 'CDSCO-LIC-TN-015',
+    city: 'Chennai',
+    location: { address: '1 Old Jail Road, Royapuram, Chennai', city: 'Chennai', lat: 13.1075, lng: 80.2878 },
+    contactPhone: '+91 44 2528 1351',
+    operatingHours: '24x7 Trauma Care',
+    inventorySummary: { 'O-': 6, 'O+': 48, 'A-': 8, 'A+': 41, 'B-': 5, 'B+': 54, 'AB-': 3, 'AB+': 22 },
+    status: 'active'
+  },
+  {
+    id: 'bb-che-03',
+    name: 'Apollo Hospitals Blood Bank',
+    license: 'CDSCO-LIC-TN-029',
+    city: 'Chennai',
+    location: { address: '21 Greams Lane, Thousand Lights, Chennai', city: 'Chennai', lat: 13.0604, lng: 80.2514 },
+    contactPhone: '+91 44 2829 0200',
+    operatingHours: '24x7 Critical Transfusion',
+    inventorySummary: { 'O-': 7, 'O+': 50, 'A-': 7, 'A+': 43, 'B-': 6, 'B+': 57, 'AB-': 4, 'AB+': 25 },
+    status: 'active'
+  },
+  {
+    id: 'bb-che-04',
+    name: 'Cancer Institute (WIA) Blood Centre',
+    license: 'CDSCO-LIC-TN-042',
+    city: 'Chennai',
+    location: { address: 'Sardar Patel Road, Guindy-Adyar, Chennai', city: 'Chennai', lat: 13.0076, lng: 80.2443 },
+    contactPhone: '+91 44 2220 9150',
+    operatingHours: '24x7 Oncology Blood Unit',
+    inventorySummary: { 'O-': 4, 'O+': 35, 'A-': 6, 'A+': 30, 'B-': 4, 'B+': 40, 'AB-': 2, 'AB+': 18 },
+    status: 'active'
+  },
+  {
+    id: 'bb-che-05',
+    name: 'MIOT International Hospital Blood Bank',
+    license: 'CDSCO-LIC-TN-058',
+    city: 'Chennai',
+    location: { address: '4/112, Mount-Poonamallee Road, Manapakkam, Chennai', city: 'Chennai', lat: 13.0189, lng: 80.1804 },
+    contactPhone: '+91 44 4200 2288',
+    operatingHours: '24x7 Orthopaedic & Emergency',
+    inventorySummary: { 'O-': 6, 'O+': 41, 'A-': 6, 'A+': 34, 'B-': 5, 'B+': 46, 'AB-': 3, 'AB+': 19 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 6. HYDERABAD
+  // ==============================
   {
     id: 'bb-hyd-01',
     name: 'Osmania General Hospital Blood Bank',
@@ -378,38 +544,116 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'Afzal Gunj, Hyderabad', city: 'Hyderabad', lat: 17.3753, lng: 78.4744 },
     contactPhone: '+91 40 2460 0121',
     operatingHours: '24x7 Trauma Care',
-    inventorySummary: {
-      'O-': 4,
-      'O+': 50,
-      'A-': 6,
-      'A+': 43,
-      'B-': 5,
-      'B+': 58,
-      'AB-': 2,
-      'AB+': 25
-    },
+    inventorySummary: { 'O-': 4, 'O+': 50, 'A-': 6, 'A+': 43, 'B-': 5, 'B+': 58, 'AB-': 2, 'AB+': 25 },
     status: 'active'
   },
+  {
+    id: 'bb-hyd-02',
+    name: 'Nizam’s Institute of Medical Sciences (NIMS) Blood Bank',
+    license: 'CDSCO-LIC-TG-018',
+    city: 'Hyderabad',
+    location: { address: 'Punjagutta, Hyderabad', city: 'Hyderabad', lat: 17.4222, lng: 78.4502 },
+    contactPhone: '+91 40 2348 9000',
+    operatingHours: '24x7 Apex Care',
+    inventorySummary: { 'O-': 7, 'O+': 54, 'A-': 8, 'A+': 46, 'B-': 6, 'B+': 62, 'AB-': 4, 'AB+': 27 },
+    status: 'active'
+  },
+  {
+    id: 'bb-hyd-03',
+    name: 'Gandhi Hospital Blood Bank',
+    license: 'CDSCO-LIC-TG-026',
+    city: 'Hyderabad',
+    location: { address: 'Bhoiguda Road, Musheerabad, Secunderabad', city: 'Hyderabad', lat: 17.4245, lng: 78.5032 },
+    contactPhone: '+91 40 2750 5566',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 5, 'O+': 46, 'A-': 7, 'A+': 40, 'B-': 5, 'B+': 53, 'AB-': 3, 'AB+': 22 },
+    status: 'active'
+  },
+  {
+    id: 'bb-hyd-04',
+    name: 'Apollo Health City Blood Bank',
+    license: 'CDSCO-LIC-TG-039',
+    city: 'Hyderabad',
+    location: { address: 'Road No 92, Film Nagar, Jubilee Hills, Hyderabad', city: 'Hyderabad', lat: 17.4172, lng: 78.4116 },
+    contactPhone: '+91 40 2360 7777',
+    operatingHours: '24x7 Critical Transfusion',
+    inventorySummary: { 'O-': 6, 'O+': 48, 'A-': 7, 'A+': 42, 'B-': 6, 'B+': 55, 'AB-': 4, 'AB+': 24 },
+    status: 'active'
+  },
+  {
+    id: 'bb-hyd-05',
+    name: 'Yashoda Hospitals Blood Centre',
+    license: 'CDSCO-LIC-TG-047',
+    city: 'Hyderabad',
+    location: { address: 'Raj Bhavan Road, Somajiguda, Hyderabad', city: 'Hyderabad', lat: 17.4278, lng: 78.4601 },
+    contactPhone: '+91 40 4567 4567',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 5, 'O+': 42, 'A-': 6, 'A+': 36, 'B-': 5, 'B+': 48, 'AB-': 3, 'AB+': 21 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 7. PUNE
+  // ==============================
   {
     id: 'bb-pune-01',
     name: 'Sassoon General Hospital Blood Bank',
     license: 'CDSCO-LIC-MH-082',
     city: 'Pune',
-    location: { address: 'Near Pune Railway Station, Pune', city: 'Pune', lat: 18.5255, lng: 73.8742 },
+    location: { address: 'Near Pune Railway Station, Sangamvadi, Pune', city: 'Pune', lat: 18.5255, lng: 73.8742 },
     contactPhone: '+91 20 2612 8000',
     operatingHours: '24x7 Regional Blood Centre',
-    inventorySummary: {
-      'O-': 6,
-      'O+': 38,
-      'A-': 5,
-      'A+': 34,
-      'B-': 4,
-      'B+': 44,
-      'AB-': 3,
-      'AB+': 19
-    },
+    inventorySummary: { 'O-': 6, 'O+': 38, 'A-': 5, 'A+': 34, 'B-': 4, 'B+': 44, 'AB-': 3, 'AB+': 19 },
     status: 'active'
   },
+  {
+    id: 'bb-pune-02',
+    name: 'KEM Hospital Blood Bank',
+    license: 'CDSCO-LIC-MH-095',
+    city: 'Pune',
+    location: { address: '489 Rasta Peth, Sardar Moodliar Road, Pune', city: 'Pune', lat: 18.5192, lng: 73.8675 },
+    contactPhone: '+91 20 2606 1000',
+    operatingHours: '24x7 Critical Care',
+    inventorySummary: { 'O-': 5, 'O+': 40, 'A-': 6, 'A+': 35, 'B-': 5, 'B+': 46, 'AB-': 3, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-pune-03',
+    name: 'Deenanath Mangeshkar Hospital Blood Centre',
+    license: 'CDSCO-LIC-MH-107',
+    city: 'Pune',
+    location: { address: 'Erandwane, Near Mhatre Bridge, Pune', city: 'Pune', lat: 18.5036, lng: 73.8308 },
+    contactPhone: '+91 20 4015 1000',
+    operatingHours: '24x7 Apex Transfusion',
+    inventorySummary: { 'O-': 7, 'O+': 45, 'A-': 7, 'A+': 40, 'B-': 6, 'B+': 52, 'AB-': 4, 'AB+': 23 },
+    status: 'active'
+  },
+  {
+    id: 'bb-pune-04',
+    name: 'Ruby Hall Clinic Blood Bank',
+    license: 'CDSCO-LIC-MH-119',
+    city: 'Pune',
+    location: { address: '40 Sasoon Road, Sangamvadi, Pune', city: 'Pune', lat: 18.5312, lng: 73.8765 },
+    contactPhone: '+91 20 6645 5100',
+    operatingHours: '24x7 Cardiac & Trauma',
+    inventorySummary: { 'O-': 5, 'O+': 36, 'A-': 6, 'A+': 32, 'B-': 4, 'B+': 42, 'AB-': 2, 'AB+': 18 },
+    status: 'active'
+  },
+  {
+    id: 'bb-pune-05',
+    name: 'Janakalyan Raktakendra',
+    license: 'CDSCO-LIC-MH-131',
+    city: 'Pune',
+    location: { address: 'Sarasbaug, Sadashiv Peth, Pune', city: 'Pune', lat: 18.5028, lng: 73.8542 },
+    contactPhone: '+91 20 2444 9546',
+    operatingHours: '24x7 Voluntary Blood Centre',
+    inventorySummary: { 'O-': 8, 'O+': 50, 'A-': 8, 'A+': 44, 'B-': 6, 'B+': 58, 'AB-': 4, 'AB+': 26 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 8. JAIPUR
+  // ==============================
   {
     id: 'bb-jai-01',
     name: 'Sawai Man Singh (SMS) Hospital Blood Centre',
@@ -418,38 +662,46 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'JLN Marg, Ashok Nagar, Jaipur', city: 'Jaipur', lat: 26.9054, lng: 75.8164 },
     contactPhone: '+91 141 256 0291',
     operatingHours: '24x7 Emergency Service',
-    inventorySummary: {
-      'O-': 5,
-      'O+': 46,
-      'A-': 6,
-      'A+': 37,
-      'B-': 5,
-      'B+': 49,
-      'AB-': 3,
-      'AB+': 21
-    },
+    inventorySummary: { 'O-': 5, 'O+': 46, 'A-': 6, 'A+': 37, 'B-': 5, 'B+': 49, 'AB-': 3, 'AB+': 21 },
     status: 'active'
   },
   {
-    id: 'bb-lko-01',
-    name: "King George's Medical University (KGMU) Blood Bank",
-    license: 'CDSCO-LIC-UP-018',
-    city: 'Lucknow',
-    location: { address: 'Shah Mina Road, Chowk, Lucknow', city: 'Lucknow', lat: 26.8687, lng: 80.9168 },
-    contactPhone: '+91 522 225 7540',
-    operatingHours: '24x7 Trauma & Critical Care',
-    inventorySummary: {
-      'O-': 4,
-      'O+': 40,
-      'A-': 5,
-      'A+': 35,
-      'B-': 6,
-      'B+': 48,
-      'AB-': 2,
-      'AB+': 20
-    },
+    id: 'bb-jai-02',
+    name: 'SDMH Hospital Blood Bank',
+    license: 'CDSCO-LIC-RJ-018',
+    city: 'Jaipur',
+    location: { address: 'Bhawani Singh Road, Bapu Nagar, Jaipur', city: 'Jaipur', lat: 26.8924, lng: 75.8087 },
+    contactPhone: '+91 141 256 6251',
+    operatingHours: '24x7 Emergency Transfusion',
+    inventorySummary: { 'O-': 6, 'O+': 40, 'A-': 6, 'A+': 34, 'B-': 5, 'B+': 44, 'AB-': 3, 'AB+': 19 },
     status: 'active'
   },
+  {
+    id: 'bb-jai-03',
+    name: 'Fortis Escorts Hospital Blood Centre',
+    license: 'CDSCO-LIC-RJ-031',
+    city: 'Jaipur',
+    location: { address: 'Jawaharlal Nehru Marg, Malviya Nagar, Jaipur', city: 'Jaipur', lat: 26.8524, lng: 75.8052 },
+    contactPhone: '+91 141 254 7000',
+    operatingHours: '24x7 Critical Care',
+    inventorySummary: { 'O-': 4, 'O+': 35, 'A-': 5, 'A+': 30, 'B-': 4, 'B+': 41, 'AB-': 2, 'AB+': 17 },
+    status: 'active'
+  },
+  {
+    id: 'bb-jai-04',
+    name: 'Swasthya Kalyan Blood Centre',
+    license: 'CDSCO-LIC-RJ-044',
+    city: 'Jaipur',
+    location: { address: '10 Gopalpura Bypass, Tonk Road, Jaipur', city: 'Jaipur', lat: 26.8624, lng: 75.7892 },
+    contactPhone: '+91 141 276 0524',
+    operatingHours: '24x7 Voluntary Blood Bank',
+    inventorySummary: { 'O-': 7, 'O+': 48, 'A-': 7, 'A+': 40, 'B-': 6, 'B+': 52, 'AB-': 4, 'AB+': 23 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 9. AHMEDABAD
+  // ==============================
   {
     id: 'bb-ahm-01',
     name: 'Civil Hospital Ahmedabad Blood Centre',
@@ -458,18 +710,94 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'Asarwa, Ahmedabad', city: 'Ahmedabad', lat: 23.0525, lng: 72.5991 },
     contactPhone: '+91 79 2268 0074',
     operatingHours: '24x7 State Transfusion Service',
-    inventorySummary: {
-      'O-': 5,
-      'O+': 42,
-      'A-': 6,
-      'A+': 36,
-      'B-': 4,
-      'B+': 46,
-      'AB-': 3,
-      'AB+': 22
-    },
+    inventorySummary: { 'O-': 5, 'O+': 42, 'A-': 6, 'A+': 36, 'B-': 4, 'B+': 46, 'AB-': 3, 'AB+': 22 },
     status: 'active'
   },
+  {
+    id: 'bb-ahm-02',
+    name: 'Prathama Blood Centre',
+    license: 'CDSCO-LIC-GJ-028',
+    city: 'Ahmedabad',
+    location: { address: 'Near Mahalaxmi Cross Road, Paldi, Ahmedabad', city: 'Ahmedabad', lat: 23.0125, lng: 72.5642 },
+    contactPhone: '+91 79 2658 8888',
+    operatingHours: '24x7 Ultra-modern Blood Centre',
+    inventorySummary: { 'O-': 8, 'O+': 55, 'A-': 8, 'A+': 48, 'B-': 6, 'B+': 60, 'AB-': 5, 'AB+': 26 },
+    status: 'active'
+  },
+  {
+    id: 'bb-ahm-03',
+    name: 'Zydus Hospitals Blood Centre',
+    license: 'CDSCO-LIC-GJ-041',
+    city: 'Ahmedabad',
+    location: { address: 'Zydus Hospital Road, SG Highway, Thaltej, Ahmedabad', city: 'Ahmedabad', lat: 23.0642, lng: 72.5085 },
+    contactPhone: '+91 79 6619 0201',
+    operatingHours: '24x7 Critical Care',
+    inventorySummary: { 'O-': 6, 'O+': 40, 'A-': 6, 'A+': 34, 'B-': 5, 'B+': 44, 'AB-': 3, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-ahm-04',
+    name: 'Indian Red Cross Society Blood Centre',
+    license: 'CDSCO-LIC-GJ-055',
+    city: 'Ahmedabad',
+    location: { address: 'Vikas Gruh Road, Paldi, Ahmedabad', city: 'Ahmedabad', lat: 23.0165, lng: 72.5582 },
+    contactPhone: '+91 79 2658 0888',
+    operatingHours: '24x7 Voluntary Transfusion',
+    inventorySummary: { 'O-': 7, 'O+': 46, 'A-': 7, 'A+': 39, 'B-': 6, 'B+': 50, 'AB-': 4, 'AB+': 22 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 10. LUCKNOW
+  // ==============================
+  {
+    id: 'bb-lko-01',
+    name: "King George's Medical University (KGMU) Blood Bank",
+    license: 'CDSCO-LIC-UP-018',
+    city: 'Lucknow',
+    location: { address: 'Shah Mina Road, Chowk, Lucknow', city: 'Lucknow', lat: 26.8687, lng: 80.9168 },
+    contactPhone: '+91 522 225 7540',
+    operatingHours: '24x7 Trauma & Critical Care',
+    inventorySummary: { 'O-': 4, 'O+': 40, 'A-': 5, 'A+': 35, 'B-': 6, 'B+': 48, 'AB-': 2, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-lko-02',
+    name: 'SGPGI Central Blood Bank',
+    license: 'CDSCO-LIC-UP-032',
+    city: 'Lucknow',
+    location: { address: 'Raebareli Road, Lucknow', city: 'Lucknow', lat: 26.7456, lng: 80.9385 },
+    contactPhone: '+91 522 249 4000',
+    operatingHours: '24x7 Apex Transfusion Medicine',
+    inventorySummary: { 'O-': 7, 'O+': 52, 'A-': 8, 'A+': 44, 'B-': 7, 'B+': 58, 'AB-': 4, 'AB+': 25 },
+    status: 'active'
+  },
+  {
+    id: 'bb-lko-03',
+    name: 'Dr. Ram Manohar Lohia Institute (RMLIMS) Blood Centre',
+    license: 'CDSCO-LIC-UP-045',
+    city: 'Lucknow',
+    location: { address: 'Vibhuti Khand, Gomti Nagar, Lucknow', city: 'Lucknow', lat: 26.8654, lng: 81.0025 },
+    contactPhone: '+91 522 491 8504',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 5, 'O+': 38, 'A-': 6, 'A+': 32, 'B-': 5, 'B+': 45, 'AB-': 3, 'AB+': 18 },
+    status: 'active'
+  },
+  {
+    id: 'bb-lko-04',
+    name: 'Balrampur Hospital Blood Bank',
+    license: 'CDSCO-LIC-UP-059',
+    city: 'Lucknow',
+    location: { address: 'Golaganj, Kaiserbagh, Lucknow', city: 'Lucknow', lat: 26.8572, lng: 80.9284 },
+    contactPhone: '+91 522 262 4040',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 4, 'O+': 34, 'A-': 5, 'A+': 28, 'B-': 5, 'B+': 41, 'AB-': 2, 'AB+': 16 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 11. CHANDIGARH TRICITY
+  // ==============================
   {
     id: 'bb-chd-01',
     name: 'PGIMER Rotary Central Blood Bank',
@@ -478,16 +806,326 @@ export const INITIAL_BLOOD_BANKS: BloodBank[] = [
     location: { address: 'Sector 12, Chandigarh', city: 'Chandigarh', lat: 30.7634, lng: 76.7770 },
     contactPhone: '+91 172 275 6480',
     operatingHours: '24x7 Apex Blood Centre',
-    inventorySummary: {
-      'O-': 7,
-      'O+': 45,
-      'A-': 7,
-      'A+': 40,
-      'B-': 5,
-      'B+': 50,
-      'AB-': 4,
-      'AB+': 23
-    },
+    inventorySummary: { 'O-': 7, 'O+': 45, 'A-': 7, 'A+': 40, 'B-': 5, 'B+': 50, 'AB-': 4, 'AB+': 23 },
+    status: 'active'
+  },
+  {
+    id: 'bb-chd-02',
+    name: 'GMCH Sector 32 Blood Bank',
+    license: 'CDSCO-LIC-CH-014',
+    city: 'Chandigarh',
+    location: { address: 'Sector 32-B, Chandigarh', city: 'Chandigarh', lat: 30.7092, lng: 76.7765 },
+    contactPhone: '+91 172 266 5253',
+    operatingHours: '24x7 Trauma & Critical Care',
+    inventorySummary: { 'O-': 6, 'O+': 42, 'A-': 6, 'A+': 36, 'B-': 5, 'B+': 46, 'AB-': 3, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-chd-03',
+    name: 'Rotary Blood Bank Resource Centre',
+    license: 'CDSCO-LIC-CH-027',
+    city: 'Chandigarh',
+    location: { address: 'Sector 37-A, Chandigarh', city: 'Chandigarh', lat: 30.7428, lng: 76.7542 },
+    contactPhone: '+91 172 269 0000',
+    operatingHours: '24x7 Voluntary Transfusion',
+    inventorySummary: { 'O-': 6, 'O+': 38, 'A-': 5, 'A+': 32, 'B-': 4, 'B+': 43, 'AB-': 3, 'AB+': 18 },
+    status: 'active'
+  },
+  {
+    id: 'bb-chd-04',
+    name: 'Max Super Speciality Hospital Blood Centre',
+    license: 'CDSCO-LIC-PB-033',
+    city: 'Chandigarh',
+    location: { address: 'Phase 6, Mohali, Chandigarh Tricity', city: 'Chandigarh', lat: 30.7258, lng: 76.7142 },
+    contactPhone: '+91 172 521 2000',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 5, 'O+': 35, 'A-': 5, 'A+': 30, 'B-': 4, 'B+': 39, 'AB-': 2, 'AB+': 16 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 12. PATNA
+  // ==============================
+  {
+    id: 'bb-pat-01',
+    name: 'Patna Medical College & Hospital (PMCH) Blood Bank',
+    license: 'CDSCO-LIC-BR-006',
+    city: 'Patna',
+    location: { address: 'Ashok Rajpath, Patna', city: 'Patna', lat: 25.6205, lng: 85.1582 },
+    contactPhone: '+91 612 230 0080',
+    operatingHours: '24x7 Trauma & Critical Care',
+    inventorySummary: { 'O-': 5, 'O+': 44, 'A-': 6, 'A+': 38, 'B-': 6, 'B+': 50, 'AB-': 3, 'AB+': 21 },
+    status: 'active'
+  },
+  {
+    id: 'bb-pat-02',
+    name: 'AIIMS Patna Blood Transfusion Centre',
+    license: 'CDSCO-LIC-BR-019',
+    city: 'Patna',
+    location: { address: 'Phulwari Sharif, Patna', city: 'Patna', lat: 25.5615, lng: 85.0442 },
+    contactPhone: '+91 612 245 1000',
+    operatingHours: '24x7 Apex Care',
+    inventorySummary: { 'O-': 6, 'O+': 48, 'A-': 7, 'A+': 42, 'B-': 5, 'B+': 55, 'AB-': 4, 'AB+': 24 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 13. KOCHI
+  // ==============================
+  {
+    id: 'bb-cok-01',
+    name: 'Ernakulam General Hospital Blood Bank',
+    license: 'CDSCO-LIC-KL-008',
+    city: 'Kochi',
+    location: { address: 'Hospital Road, Marine Drive, Kochi', city: 'Kochi', lat: 9.9725, lng: 76.2825 },
+    contactPhone: '+91 484 236 1251',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 6, 'O+': 42, 'A-': 7, 'A+': 36, 'B-': 5, 'B+': 46, 'AB-': 3, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-cok-02',
+    name: 'Amrita Institute of Medical Sciences Blood Centre',
+    license: 'CDSCO-LIC-KL-021',
+    city: 'Kochi',
+    location: { address: 'AIMS Ponekkara, Edappally, Kochi', city: 'Kochi', lat: 10.0324, lng: 76.2915 },
+    contactPhone: '+91 484 285 1234',
+    operatingHours: '24x7 Critical Care',
+    inventorySummary: { 'O-': 7, 'O+': 50, 'A-': 8, 'A+': 44, 'B-': 6, 'B+': 54, 'AB-': 4, 'AB+': 24 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 14. BHOPAL
+  // ==============================
+  {
+    id: 'bb-bho-01',
+    name: 'Hamidia Hospital Blood Bank (GMC)',
+    license: 'CDSCO-LIC-MP-007',
+    city: 'Bhopal',
+    location: { address: 'GMC Campus, Sultania Road, Bhopal', city: 'Bhopal', lat: 23.2592, lng: 77.3892 },
+    contactPhone: '+91 755 405 0000',
+    operatingHours: '24x7 Trauma & Critical Care',
+    inventorySummary: { 'O-': 5, 'O+': 40, 'A-': 6, 'A+': 34, 'B-': 5, 'B+': 45, 'AB-': 3, 'AB+': 19 },
+    status: 'active'
+  },
+  {
+    id: 'bb-bho-02',
+    name: 'AIIMS Bhopal Blood Transfusion Centre',
+    license: 'CDSCO-LIC-MP-022',
+    city: 'Bhopal',
+    location: { address: 'Saket Nagar, Bhopal', city: 'Bhopal', lat: 23.2085, lng: 77.4582 },
+    contactPhone: '+91 755 267 2355',
+    operatingHours: '24x7 Apex Care',
+    inventorySummary: { 'O-': 6, 'O+': 46, 'A-': 7, 'A+': 40, 'B-': 6, 'B+': 52, 'AB-': 4, 'AB+': 22 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 15. INDORE
+  // ==============================
+  {
+    id: 'bb-ind-01',
+    name: 'Maharaja Yeshwantrao Hospital (MYH) Blood Bank',
+    license: 'CDSCO-LIC-MP-033',
+    city: 'Indore',
+    location: { address: 'MGM Medical College, AB Road, Indore', city: 'Indore', lat: 22.7196, lng: 75.8715 },
+    contactPhone: '+91 731 252 7383',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 6, 'O+': 44, 'A-': 7, 'A+': 38, 'B-': 5, 'B+': 48, 'AB-': 3, 'AB+': 21 },
+    status: 'active'
+  },
+  {
+    id: 'bb-ind-02',
+    name: 'Sri Aurobindo Institute (SAIMS) Blood Centre',
+    license: 'CDSCO-LIC-MP-048',
+    city: 'Indore',
+    location: { address: 'Indore-Ujjain Highway, Sanwer Road, Indore', city: 'Indore', lat: 22.7842, lng: 75.8452 },
+    contactPhone: '+91 731 423 1000',
+    operatingHours: '24x7 Critical Care',
+    inventorySummary: { 'O-': 5, 'O+': 38, 'A-': 6, 'A+': 32, 'B-': 4, 'B+': 42, 'AB-': 2, 'AB+': 18 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 16. NAGPUR
+  // ==============================
+  {
+    id: 'bb-nag-01',
+    name: 'Government Medical College (GMCH) Blood Bank',
+    license: 'CDSCO-LIC-MH-142',
+    city: 'Nagpur',
+    location: { address: 'Hanuman Nagar, Medical Square, Nagpur', city: 'Nagpur', lat: 21.1275, lng: 79.0985 },
+    contactPhone: '+91 712 274 4441',
+    operatingHours: '24x7 Regional Transfusion',
+    inventorySummary: { 'O-': 6, 'O+': 42, 'A-': 6, 'A+': 36, 'B-': 5, 'B+': 46, 'AB-': 3, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-nag-02',
+    name: 'Jeevan Jyoti Blood Bank',
+    license: 'CDSCO-LIC-MH-155',
+    city: 'Nagpur',
+    location: { address: 'Ramdaspeth, Central Bazar Road, Nagpur', city: 'Nagpur', lat: 21.1395, lng: 79.0742 },
+    contactPhone: '+91 712 242 1211',
+    operatingHours: '24x7 Voluntary Transfusion',
+    inventorySummary: { 'O-': 7, 'O+': 46, 'A-': 7, 'A+': 40, 'B-': 6, 'B+': 50, 'AB-': 4, 'AB+': 22 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 17. VARANASI
+  // ==============================
+  {
+    id: 'bb-var-01',
+    name: 'Sir Sunderlal Hospital (IMS-BHU) Blood Bank',
+    license: 'CDSCO-LIC-UP-067',
+    city: 'Varanasi',
+    location: { address: 'Banaras Hindu University Campus, Varanasi', city: 'Varanasi', lat: 25.2755, lng: 82.9982 },
+    contactPhone: '+91 542 230 7500',
+    operatingHours: '24x7 Apex Care',
+    inventorySummary: { 'O-': 6, 'O+': 45, 'A-': 7, 'A+': 39, 'B-': 6, 'B+': 52, 'AB-': 3, 'AB+': 22 },
+    status: 'active'
+  },
+  {
+    id: 'bb-var-02',
+    name: 'Pandit Deen Dayal Upadhyay Govt Hospital Blood Bank',
+    license: 'CDSCO-LIC-UP-081',
+    city: 'Varanasi',
+    location: { address: 'Pandeypur, Varanasi', city: 'Varanasi', lat: 25.3425, lng: 82.9915 },
+    contactPhone: '+91 542 258 5022',
+    operatingHours: '24x7 Trauma Service',
+    inventorySummary: { 'O-': 4, 'O+': 36, 'A-': 5, 'A+': 30, 'B-': 4, 'B+': 40, 'AB-': 2, 'AB+': 17 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 18. SURAT
+  // ==============================
+  {
+    id: 'bb-sur-01',
+    name: 'New Civil Hospital Blood Centre',
+    license: 'CDSCO-LIC-GJ-068',
+    city: 'Surat',
+    location: { address: 'Majura Gate, Surat', city: 'Surat', lat: 21.1765, lng: 72.8215 },
+    contactPhone: '+91 261 224 4456',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 5, 'O+': 42, 'A-': 6, 'A+': 35, 'B-': 5, 'B+': 47, 'AB-': 3, 'AB+': 20 },
+    status: 'active'
+  },
+  {
+    id: 'bb-sur-02',
+    name: 'Surat Raktadan Kendra & Research Centre',
+    license: 'CDSCO-LIC-GJ-082',
+    city: 'Surat',
+    location: { address: 'Khatodara, Near Police Station, Surat', city: 'Surat', lat: 21.1742, lng: 72.8342 },
+    contactPhone: '+91 261 263 5555',
+    operatingHours: '24x7 Apex Voluntary Centre',
+    inventorySummary: { 'O-': 8, 'O+': 55, 'A-': 8, 'A+': 46, 'B-': 6, 'B+': 62, 'AB-': 4, 'AB+': 26 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 19. VISAKHAPATNAM
+  // ==============================
+  {
+    id: 'bb-viz-01',
+    name: 'King George Hospital (KGH) Blood Bank',
+    license: 'CDSCO-LIC-AP-011',
+    city: 'Visakhapatnam',
+    location: { address: 'Maharanipeta, Visakhapatnam', city: 'Visakhapatnam', lat: 17.7085, lng: 83.3052 },
+    contactPhone: '+91 891 256 4891',
+    operatingHours: '24x7 Coastal Apex Centre',
+    inventorySummary: { 'O-': 5, 'O+': 45, 'A-': 7, 'A+': 38, 'B-': 5, 'B+': 50, 'AB-': 3, 'AB+': 22 },
+    status: 'active'
+  },
+  {
+    id: 'bb-viz-02',
+    name: 'Rotary Blood Centre Visakhapatnam',
+    license: 'CDSCO-LIC-AP-024',
+    city: 'Visakhapatnam',
+    location: { address: 'Daba Gardens, Visakhapatnam', city: 'Visakhapatnam', lat: 17.7195, lng: 83.2985 },
+    contactPhone: '+91 891 254 3322',
+    operatingHours: '24x7 Voluntary Transfusion',
+    inventorySummary: { 'O-': 6, 'O+': 38, 'A-': 6, 'A+': 32, 'B-': 4, 'B+': 42, 'AB-': 3, 'AB+': 18 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 20. GUWAHATI
+  // ==============================
+  {
+    id: 'bb-guw-01',
+    name: 'Gauhati Medical College & Hospital (GMCH) Blood Bank',
+    license: 'CDSCO-LIC-AS-005',
+    city: 'Guwahati',
+    location: { address: 'Narakasur Hilltop, Bhangagarh, Guwahati', city: 'Guwahati', lat: 26.1554, lng: 91.7712 },
+    contactPhone: '+91 361 252 9457',
+    operatingHours: '24x7 North-East Apex Care',
+    inventorySummary: { 'O-': 6, 'O+': 46, 'A-': 7, 'A+': 40, 'B-': 6, 'B+': 52, 'AB-': 3, 'AB+': 22 },
+    status: 'active'
+  },
+  {
+    id: 'bb-guw-02',
+    name: 'Dr. B. Borooah Cancer Institute Blood Bank',
+    license: 'CDSCO-LIC-AS-017',
+    city: 'Guwahati',
+    location: { address: 'Gopinath Nagar, AK Azad Road, Guwahati', city: 'Guwahati', lat: 26.1685, lng: 91.7452 },
+    contactPhone: '+91 361 247 2364',
+    operatingHours: '24x7 Oncology Blood Unit',
+    inventorySummary: { 'O-': 4, 'O+': 34, 'A-': 5, 'A+': 28, 'B-': 4, 'B+': 38, 'AB-': 2, 'AB+': 16 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 21. BHUBANESWAR
+  // ==============================
+  {
+    id: 'bb-bhu-01',
+    name: 'AIIMS Bhubaneswar Blood Transfusion Centre',
+    license: 'CDSCO-LIC-OD-009',
+    city: 'Bhubaneswar',
+    location: { address: 'Sijua, Patrapada, Bhubaneswar', city: 'Bhubaneswar', lat: 20.2285, lng: 85.7745 },
+    contactPhone: '+91 674 247 6789',
+    operatingHours: '24x7 Apex Transfusion',
+    inventorySummary: { 'O-': 7, 'O+': 48, 'A-': 7, 'A+': 42, 'B-': 6, 'B+': 54, 'AB-': 4, 'AB+': 24 },
+    status: 'active'
+  },
+  {
+    id: 'bb-bhu-02',
+    name: 'Capital Hospital Central Blood Bank',
+    license: 'CDSCO-LIC-OD-021',
+    city: 'Bhubaneswar',
+    location: { address: 'Unit 6, Ganga Nagar, Bhubaneswar', city: 'Bhubaneswar', lat: 20.2642, lng: 85.8242 },
+    contactPhone: '+91 674 239 1983',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 5, 'O+': 40, 'A-': 6, 'A+': 35, 'B-': 5, 'B+': 46, 'AB-': 3, 'AB+': 19 },
+    status: 'active'
+  },
+
+  // ==============================
+  // 22. THIRUVANANTHAPURAM
+  // ==============================
+  {
+    id: 'bb-trv-01',
+    name: 'Government Medical College Hospital Blood Bank',
+    license: 'CDSCO-LIC-KL-035',
+    city: 'Thiruvananthapuram',
+    location: { address: 'Medical College Junction, Thiruvananthapuram', city: 'Thiruvananthapuram', lat: 8.5245, lng: 76.9285 },
+    contactPhone: '+91 471 252 8300',
+    operatingHours: '24x7 Emergency Service',
+    inventorySummary: { 'O-': 6, 'O+': 44, 'A-': 7, 'A+': 38, 'B-': 5, 'B+': 48, 'AB-': 3, 'AB+': 21 },
+    status: 'active'
+  },
+  {
+    id: 'bb-trv-02',
+    name: 'Sree Chitra Tirunal Institute (SCTIMST) Blood Bank',
+    license: 'CDSCO-LIC-KL-049',
+    city: 'Thiruvananthapuram',
+    location: { address: 'Medical College PO, Thiruvananthapuram', city: 'Thiruvananthapuram', lat: 8.5215, lng: 76.9242 },
+    contactPhone: '+91 471 252 4444',
+    operatingHours: '24x7 Cardiac & Neuro Transfusion',
+    inventorySummary: { 'O-': 5, 'O+': 38, 'A-': 6, 'A+': 32, 'B-': 4, 'B+': 42, 'AB-': 2, 'AB+': 18 },
     status: 'active'
   }
 ];

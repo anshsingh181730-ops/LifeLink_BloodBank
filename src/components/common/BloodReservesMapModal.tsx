@@ -725,23 +725,30 @@ export const BloodReservesMapModal: React.FC<BloodReservesMapModalProps> = ({
           </div>
 
           {/* Quick Metro City Selector Chips */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', maxHeight: '72px', overflowY: 'auto', paddingRight: '4px' }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', marginRight: '0.2rem' }}>
               Quick Cities:
             </span>
             {availableCities.map(city => {
               const isSelected = activeCity.toLowerCase() === city.toLowerCase();
+              const matchingBanks = bloodBanks.filter(b => b.city.toLowerCase() === city.toLowerCase());
+              const count = matchingBanks.length;
+
               return (
                 <button
                   key={city}
                   type="button"
                   onClick={() => {
                     setActiveCity(city);
-                    const matchingBanks = bloodBanks.filter(b => b.city.toLowerCase() === city.toLowerCase());
                     if (matchingBanks.length > 0) {
                       setFocusedBank(matchingBanks[0]);
                       if (mapInstanceRef.current) {
-                        mapInstanceRef.current.flyTo([matchingBanks[0].location.lat, matchingBanks[0].location.lng], 12);
+                        if (matchingBanks.length === 1) {
+                          mapInstanceRef.current.flyTo([matchingBanks[0].location.lat, matchingBanks[0].location.lng], 13);
+                        } else {
+                          const bounds = matchingBanks.map(b => [b.location.lat, b.location.lng] as [number, number]);
+                          mapInstanceRef.current.fitBounds(bounds, { padding: [45, 45], maxZoom: 13 });
+                        }
                       }
                     }
                   }}
@@ -754,10 +761,24 @@ export const BloodReservesMapModal: React.FC<BloodReservesMapModalProps> = ({
                     fontSize: '0.74rem',
                     fontWeight: isSelected ? 700 : 500,
                     cursor: 'pointer',
-                    transition: 'all 0.15s ease'
+                    transition: 'all 0.15s ease',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.25rem'
                   }}
+                  title={`View ${count} participating blood centers in ${city}`}
                 >
-                  {city === 'Delhi' ? 'Delhi NCR' : city}
+                  <span>{city === 'Delhi' ? 'Delhi NCR' : city}</span>
+                  <span style={{
+                    fontSize: '0.68rem',
+                    opacity: 0.85,
+                    background: isSelected ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.08)',
+                    padding: '1px 5px',
+                    borderRadius: '999px',
+                    fontWeight: 700
+                  }}>
+                    {count}
+                  </span>
                 </button>
               );
             })}
