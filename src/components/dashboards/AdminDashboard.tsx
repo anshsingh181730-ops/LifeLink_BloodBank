@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AuditLogDemo } from '../common/AuditLogDemo';
-import { StatusChip } from '../common/StatusChip';
-import { ShieldCheck, Check, X, Clock } from 'lucide-react';
+import { ShieldCheck, Clock, UserCheck, LogOut } from 'lucide-react';
 import { BloodDemandHeatmap } from '../common/BloodDemandHeatmap';
+import { DonorKycQueue } from '../common/DonorKycQueue';
+import { InstitutionKycQueue } from '../common/InstitutionKycQueue';
 
 export const AdminDashboard: React.FC = () => {
-  const { users, verifyInstitution, slaConfig, t } = useApp();
+  const { kycSubmissions, institutionSubmissions, slaConfig, t, signOutStaff } = useApp();
+  const [activeQueueTab, setActiveQueueTab] = useState<'donor' | 'institutional'>('donor');
 
-  const institutionalUsers = users.filter(u => u.role === 'hospital' || u.role === 'bloodbank' || u.role === 'ngo');
+  const pendingDonorCount = kycSubmissions.filter(s => s.status === 'pending').length;
+  const pendingInstitutionCount = institutionSubmissions.filter(s => s.verificationStatus === 'pending').length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -59,103 +62,185 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div style={{
-          background: '#F8FAFC',
-          border: '1px solid var(--border-subtle)',
-          padding: '0.5rem 1rem',
-          borderRadius: 'var(--radius-md)',
-          fontSize: '0.8rem',
-          color: 'var(--text-secondary)'
-        }}>
-          Server Target: <strong style={{ color: 'var(--primary-navy)' }}>99.9% Uptime</strong> • DPDP Act 2023 Compliant Policy
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div style={{
+            background: '#F8FAFC',
+            border: '1px solid var(--border-subtle)',
+            padding: '0.5rem 1rem',
+            borderRadius: 'var(--radius-md)',
+            fontSize: '0.8rem',
+            color: 'var(--text-secondary)'
+          }}>
+            Server Target: <strong style={{ color: 'var(--primary-navy)' }}>99.9% Uptime</strong> • DPDP Act 2023 Compliant Policy
+          </div>
+
+          <button
+            type="button"
+            id="btn-admin-signout"
+            onClick={signOutStaff}
+            style={{
+              fontSize: '0.82rem',
+              padding: '0.48rem 0.95rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              background: '#FFFFFF',
+              border: '1px solid #FECACA',
+              borderRadius: 'var(--radius-md)',
+              color: '#DC2626',
+              fontWeight: 700,
+              cursor: 'pointer'
+            }}
+            title="Sign out of administrative account"
+          >
+            <LogOut size={15} color="#DC2626" />
+            <span>Sign Out</span>
+          </button>
         </div>
       </div>
 
-      {/* Institutional Verification Queue */}
+      {/* Verification Management Card with Tabs */}
       <div className="card">
-        <div className="card-header">
-          <div>
-            <h2 className="card-title">{t.admin.verificationQueue}</h2>
-            <div className="card-desc">
-              Review institutional licenses and <strong>(Simulated)</strong> Aadhaar/ABHA e-KYC documents prior to granting broadcast privileges.
-            </div>
-          </div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--secondary-blue)', fontWeight: 700 }}>
-            {institutionalUsers.length} Institutions Enrolled
-          </span>
+        {/* Verification Queue Tab Switcher */}
+        <div style={{
+          display: 'flex',
+          borderBottom: '1px solid var(--border-subtle)',
+          padding: '0.75rem 1.25rem',
+          gap: '0.6rem',
+          alignItems: 'center',
+          background: '#F8FAFC',
+          borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0'
+        }}>
+          <button
+            type="button"
+            id="tab-donor-kyc-queue"
+            onClick={() => setActiveQueueTab('donor')}
+            style={{
+              padding: '0.45rem 1rem',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              border: activeQueueTab === 'donor' ? '1px solid var(--primary-navy)' : '1px solid transparent',
+              background: activeQueueTab === 'donor' ? 'var(--primary-navy)' : 'transparent',
+              color: activeQueueTab === 'donor' ? '#FFFFFF' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <UserCheck size={15} />
+            <span>Donor KYC Verification Queue</span>
+            {pendingDonorCount > 0 ? (
+              <span style={{
+                background: '#EF4444',
+                color: '#FFFFFF',
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                padding: '0.1rem 0.45rem',
+                borderRadius: 'var(--radius-full)'
+              }}>
+                {pendingDonorCount} Pending
+              </span>
+            ) : (
+              <span style={{
+                background: activeQueueTab === 'donor' ? 'rgba(255, 255, 255, 0.2)' : '#E2E8F0',
+                color: activeQueueTab === 'donor' ? '#FFFFFF' : 'var(--text-muted)',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                padding: '0.1rem 0.45rem',
+                borderRadius: 'var(--radius-full)'
+              }}>
+                {kycSubmissions.length}
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            id="tab-institutional-queue"
+            onClick={() => setActiveQueueTab('institutional')}
+            style={{
+              padding: '0.45rem 1rem',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              border: activeQueueTab === 'institutional' ? '1px solid var(--primary-navy)' : '1px solid transparent',
+              background: activeQueueTab === 'institutional' ? 'var(--primary-navy)' : 'transparent',
+              color: activeQueueTab === 'institutional' ? '#FFFFFF' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <ShieldCheck size={15} />
+            <span>Institutional Verification Queue</span>
+            {pendingInstitutionCount > 0 ? (
+              <span style={{
+                background: '#EF4444',
+                color: '#FFFFFF',
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                padding: '0.1rem 0.45rem',
+                borderRadius: 'var(--radius-full)'
+              }}>
+                {pendingInstitutionCount} Pending
+              </span>
+            ) : (
+              <span style={{
+                background: activeQueueTab === 'institutional' ? 'rgba(255, 255, 255, 0.2)' : '#E2E8F0',
+                color: activeQueueTab === 'institutional' ? '#FFFFFF' : 'var(--text-muted)',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                padding: '0.1rem 0.45rem',
+                borderRadius: 'var(--radius-full)'
+              }}>
+                {institutionSubmissions.length}
+              </span>
+            )}
+          </button>
         </div>
 
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Institution Name</th>
-                <th>Role Type</th>
-                <th>Official License / Darpan Ref</th>
-                <th>Simulated e-KYC Status</th>
-                <th>Approval Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {institutionalUsers.map(inst => (
-                <tr key={inst.id}>
-                  <td>
-                    <strong style={{ color: 'var(--primary-navy)' }}>{inst.institutionName || inst.name}</strong>
-                    <span style={{ display: 'block', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                      Contact: {inst.phone}
-                    </span>
-                  </td>
-                  <td>
-                    <span style={{
-                      textTransform: 'uppercase',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      color: inst.role === 'hospital' ? '#0D47A1' : inst.role === 'bloodbank' ? '#E53935' : '#10B981'
-                    }}>
-                      {inst.role}
-                    </span>
-                  </td>
-                  <td>
-                    <code style={{ color: 'var(--primary-navy)', background: '#F1F5F9', padding: '0.2rem 0.4rem', borderRadius: '4px', fontSize: '0.78rem' }}>
-                      {inst.licenseNumber || 'PENDING-REG-01'}
-                    </code>
-                  </td>
-                  <td>
-                    <span style={{ fontSize: '0.75rem', color: '#10B981', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                      <Check size={13} /> {inst.simulatedKycRef} <span style={{ color: 'var(--text-muted)' }}>(Simulated)</span>
-                    </span>
-                  </td>
-                  <td>
-                    <StatusChip status={inst.verificationStatus} />
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '0.4rem' }}>
-                      <button
-                        type="button"
-                        className="btn-success"
-                        style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
-                        onClick={() => verifyInstitution(inst.id, 'verified')}
-                        title="Approve simulated institutional verification"
-                      >
-                        <Check size={13} /> Approve
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-secondary"
-                        style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem', color: '#E53935', borderColor: '#FECACA' }}
-                        onClick={() => verifyInstitution(inst.id, 'rejected')}
-                        title="Reject verification"
-                      >
-                        <X size={13} /> Reject
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* Tab 1: Donor Government ID KYC Queue */}
+        {activeQueueTab === 'donor' && (
+          <div style={{ padding: '1.25rem' }}>
+            <div className="card-header" style={{ padding: '0 0 1rem 0', borderBottom: 'none' }}>
+              <div>
+                <h2 className="card-title">Voluntary Donor Government e-KYC Queue</h2>
+                <div className="card-desc">
+                  Inspect government ID credentials (Aadhaar, Voter ID, Passport, DL) uploaded by voluntary donors. Approving verified donors unlocks availability dispatch and priority weighting.
+                </div>
+              </div>
+              <span style={{ fontSize: '0.75rem', color: '#D97706', fontWeight: 700 }}>
+                {pendingDonorCount} Awaiting Review
+              </span>
+            </div>
+
+            <DonorKycQueue reviewerRole="admin" reviewerName="Platform Directorate (Dr. Sharma)" />
+          </div>
+        )}
+
+        {/* Tab 2: Institutional Verification Queue */}
+        {activeQueueTab === 'institutional' && (
+          <div style={{ padding: '1.25rem' }}>
+            <div className="card-header" style={{ padding: '0 0 1rem 0', borderBottom: 'none' }}>
+              <div>
+                <h2 className="card-title">Institutional Operating License Queue</h2>
+                <div className="card-desc">
+                  Audit and approve statutory health operating licenses (NABH, CDSCO Form 28-C, State Transfusion Council, Darpan NGO) before granting clinical network and emergency broadcast privileges.
+                </div>
+              </div>
+              <span style={{ fontSize: '0.75rem', color: '#D97706', fontWeight: 700 }}>
+                {pendingInstitutionCount} Awaiting Directorate Review
+              </span>
+            </div>
+
+            <InstitutionKycQueue reviewerName="Platform Directorate (Dr. Sharma)" />
+          </div>
+        )}
       </div>
 
       {/* Multi-Tier SLA Escalation Timers Configuration */}

@@ -4,9 +4,10 @@ import { BloodGroup } from '../../types';
 import { Activity, ShieldCheck, Heart, Clock, TrendingUp, MapPin, Calendar, ArrowRight, Compass } from 'lucide-react';
 import { SignInPortals } from '../common/SignInPortals';
 import { BloodReservesMapModal } from '../common/BloodReservesMapModal';
+import { DonorRegistrationModal } from '../common/DonorRegistrationModal';
 
 export const PublicDashboard: React.FC = () => {
-  const { bloodBanks, camps, setIsEmergencyModalOpen, switchRole, t } = useApp();
+  const { bloodBanks, camps, setIsEmergencyModalOpen, isDonorRegistrationModalOpen, setIsDonorRegistrationModalOpen, switchRole, t } = useApp();
   const [selectedCity, setSelectedCity] = useState<string>('Delhi');
   const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
   const [activeLocationDetails, setActiveLocationDetails] = useState<{
@@ -96,9 +97,10 @@ export const PublicDashboard: React.FC = () => {
 
             <button
               type="button"
+              id="btn-register-lifesaver-donor"
               className="btn-secondary"
               style={{ fontSize: '0.95rem', padding: '0.8rem 1.8rem' }}
-              onClick={() => switchRole('patient')}
+              onClick={() => setIsDonorRegistrationModalOpen(true)}
             >
               <Heart size={18} color="#0D47A1" />
               <span>{t.hero.registerAsDonor}</span>
@@ -495,6 +497,12 @@ export const PublicDashboard: React.FC = () => {
             setActiveLocationDetails(details);
           }
         }}
+      />
+
+      {/* Real Donor Registration & Government e-KYC Modal */}
+      <DonorRegistrationModal
+        isOpen={isDonorRegistrationModalOpen}
+        onClose={() => setIsDonorRegistrationModalOpen(false)}
       />
     </div>
   );

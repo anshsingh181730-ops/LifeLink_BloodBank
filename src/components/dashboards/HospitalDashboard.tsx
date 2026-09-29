@@ -3,16 +3,17 @@ import { useApp } from '../../context/AppContext';
 import { StatusChip } from '../common/StatusChip';
 import { LiveTracker } from '../common/LiveTracker';
 import { 
-  Building2, Plus, Clock, MapPin, CheckCircle2, Eye, Award 
+  Building2, Plus, Clock, MapPin, CheckCircle2, Eye, Award, ShieldCheck 
 } from 'lucide-react';
 import { SmartDonorRanking } from '../common/SmartDonorRanking';
 import { AutoEscalationWorkflow } from '../common/AutoEscalationWorkflow';
 import { BloodDemandHeatmap } from '../common/BloodDemandHeatmap';
+import { DonorKycQueue } from '../common/DonorKycQueue';
 
 export const HospitalDashboard: React.FC = () => {
   const { 
     currentUser, requests, bloodBanks, confirmTransfusion, 
-    setIsEmergencyModalOpen, setSelectedRequestId, selectedRequestId, t 
+    setIsEmergencyModalOpen, setSelectedRequestId, selectedRequestId, kycSubmissions, t 
   } = useApp();
 
   const [confirmModalUnit, setConfirmModalUnit] = useState<string | null>(null);
@@ -277,6 +278,29 @@ export const HospitalDashboard: React.FC = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Hospital Staff Voluntary Donor KYC Queue */}
+      <div className="card">
+        <div className="card-header">
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <ShieldCheck size={20} color="var(--primary-navy)" />
+              <h2 className="card-title">Voluntary Donor Government e-KYC Queue</h2>
+            </div>
+            <div className="card-desc">
+              Hospital transfusion ward staff review and verify voluntary donors to mobilize emergency donor pools.
+            </div>
+          </div>
+          <span style={{ fontSize: '0.75rem', color: '#D97706', fontWeight: 700 }}>
+            {kycSubmissions.filter(s => s.status === 'pending').length} Awaiting Verification
+          </span>
+        </div>
+
+        <DonorKycQueue 
+          reviewerRole="hospital" 
+          reviewerName={`Hospital Clinical Officer (${currentUser.name})`} 
+        />
       </div>
 
       {/* Feature 1: Smart Donor Ranking System */}

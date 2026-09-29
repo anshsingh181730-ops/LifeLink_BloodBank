@@ -38,6 +38,10 @@ export function rankDonors(
     // 1. Availability check
     if (!profile.isAvailable) continue;
 
+    // 1b. Verification check: Only fully verified donors with completed KYC can be dispatched
+    if (profile.kycStatus && profile.kycStatus !== 'verified') continue;
+    if (user.verificationStatus && user.verificationStatus !== 'verified') continue;
+
     // 2. Compatibility check
     if (!isBloodCompatible(profile.bloodGroup, recipientBloodGroup, component)) continue;
 

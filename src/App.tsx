@@ -5,6 +5,10 @@ import { AIChatbot } from './components/common/AIChatbot';
 import { EmergencyModal } from './components/common/EmergencyModal';
 import { PublicDashboard } from './components/dashboards/PublicDashboard';
 import { PatientDonorDashboard } from './components/dashboards/PatientDonorDashboard';
+import { DonorKycPendingScreen } from './components/common/DonorKycPendingScreen';
+import { DonorKycRejectedScreen } from './components/common/DonorKycRejectedScreen';
+import { InstitutionPendingScreen } from './components/common/InstitutionPendingScreen';
+import { InstitutionRejectedScreen } from './components/common/InstitutionRejectedScreen';
 import { HospitalDashboard } from './components/dashboards/HospitalDashboard';
 import { BloodBankDashboard } from './components/dashboards/BloodBankDashboard';
 import { NgoDashboard } from './components/dashboards/NgoDashboard';
@@ -12,7 +16,7 @@ import { AdminDashboard } from './components/dashboards/AdminDashboard';
 import { Heart } from 'lucide-react';
 
 const DashboardRenderer: React.FC = () => {
-  const { currentRole } = useApp();
+  const { currentRole, currentUser } = useApp();
 
   // Scroll to header level of the portal synchronously before browser paint
   React.useLayoutEffect(() => {
@@ -49,14 +53,45 @@ const DashboardRenderer: React.FC = () => {
     case 'public':
       return <PublicDashboard />;
     case 'patient':
-    case 'donor':
+    case 'donor': {
+      // Route Guard for Patient & Donor Portal:
+      // Unverified donors get NO access to PatientDonorDashboard until KYC approval
+      const kycStatus = currentUser?.kycStatus || 'pending';
+      if (kycStatus === 'pending') {
+        return <DonorKycPendingScreen />;
+      }
+      if (kycStatus === 'rejected') {
+        return <DonorKycRejectedScreen />;
+      }
       return <PatientDonorDashboard />;
-    case 'hospital':
+    }
+    case 'hospital': {
+      if (currentUser?.verificationStatus === 'pending') {
+        return <InstitutionPendingScreen />;
+      }
+      if (currentUser?.verificationStatus === 'rejected') {
+        return <InstitutionRejectedScreen />;
+      }
       return <HospitalDashboard />;
-    case 'bloodbank':
+    }
+    case 'bloodbank': {
+      if (currentUser?.verificationStatus === 'pending') {
+        return <InstitutionPendingScreen />;
+      }
+      if (currentUser?.verificationStatus === 'rejected') {
+        return <InstitutionRejectedScreen />;
+      }
       return <BloodBankDashboard />;
-    case 'ngo':
+    }
+    case 'ngo': {
+      if (currentUser?.verificationStatus === 'pending') {
+        return <InstitutionPendingScreen />;
+      }
+      if (currentUser?.verificationStatus === 'rejected') {
+        return <InstitutionRejectedScreen />;
+      }
       return <NgoDashboard />;
+    }
     case 'admin':
       return <AdminDashboard />;
     default:

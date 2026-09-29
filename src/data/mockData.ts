@@ -1,4 +1,4 @@
-import { User, DonorProfile, BloodBank, BloodUnit, BloodRequest, Camp, ImpactNotification } from '../types';
+import { User, DonorProfile, BloodBank, BloodUnit, BloodRequest, Camp, ImpactNotification, DonorKycSubmission, InstitutionVerificationSubmission } from '../types';
 
 export const INITIAL_USERS: User[] = [
   {
@@ -10,7 +10,9 @@ export const INITIAL_USERS: User[] = [
     location: { address: 'Saket, New Delhi', city: 'Delhi', lat: 28.5244, lng: 77.2167 },
     isSimulatedKycVerified: true,
     simulatedKycRef: 'KYC-SIM-IND-9281',
-    verificationStatus: 'verified'
+    verificationStatus: 'verified',
+    dateOfBirth: '1995-10-12',
+    kycStatus: 'verified'
   },
   {
     id: 'usr-donor-1',
@@ -21,7 +23,9 @@ export const INITIAL_USERS: User[] = [
     location: { address: 'Hauz Khas, New Delhi', city: 'Delhi', lat: 28.5494, lng: 77.2001 },
     isSimulatedKycVerified: true,
     simulatedKycRef: 'KYC-SIM-IND-8831',
-    verificationStatus: 'verified'
+    verificationStatus: 'verified',
+    dateOfBirth: '1990-06-15',
+    kycStatus: 'verified'
   },
   {
     id: 'usr-donor-2',
@@ -32,7 +36,9 @@ export const INITIAL_USERS: User[] = [
     location: { address: 'Lajpat Nagar, New Delhi', city: 'Delhi', lat: 28.5677, lng: 77.2433 },
     isSimulatedKycVerified: true,
     simulatedKycRef: 'KYC-SIM-IND-4412',
-    verificationStatus: 'verified'
+    verificationStatus: 'verified',
+    dateOfBirth: '1993-02-28',
+    kycStatus: 'verified'
   },
   {
     id: 'usr-donor-3',
@@ -43,7 +49,9 @@ export const INITIAL_USERS: User[] = [
     location: { address: 'Noida Sector 18', city: 'Delhi NCR', lat: 28.5708, lng: 77.3261 },
     isSimulatedKycVerified: true,
     simulatedKycRef: 'KYC-SIM-IND-7762',
-    verificationStatus: 'verified'
+    verificationStatus: 'verified',
+    dateOfBirth: '1988-11-04',
+    kycStatus: 'verified'
   },
   {
     id: 'usr-hosp-1',
@@ -109,7 +117,10 @@ export const INITIAL_DONOR_PROFILES: Record<string, DonorProfile> = {
     badges: ['Universal Lifesaver', 'Rapid 15-Min Responder', 'Centurion Club'],
     notificationRadiusKm: 25,
     urgencyThreshold: 'standard',
-    simulatedAadhaarMasked: 'XXXX-XXXX-4821 (Simulated e-KYC)'
+    simulatedAadhaarMasked: 'XXXX-XXXX-4821',
+    dateOfBirth: '1990-06-15',
+    kycStatus: 'verified',
+    idType: 'aadhaar'
   },
   'usr-donor-2': {
     userId: 'usr-donor-2',
@@ -121,7 +132,10 @@ export const INITIAL_DONOR_PROFILES: Record<string, DonorProfile> = {
     badges: ['Silver Lifesaver', 'Consistent Donor'],
     notificationRadiusKm: 15,
     urgencyThreshold: 'urgent',
-    simulatedAadhaarMasked: 'XXXX-XXXX-9912 (Simulated e-KYC)'
+    simulatedAadhaarMasked: 'XXXX-XXXX-9912',
+    dateOfBirth: '1993-02-28',
+    kycStatus: 'verified',
+    idType: 'aadhaar'
   },
   'usr-donor-3': {
     userId: 'usr-donor-3',
@@ -133,7 +147,10 @@ export const INITIAL_DONOR_PROFILES: Record<string, DonorProfile> = {
     badges: ['Platelet Champion'],
     notificationRadiusKm: 20,
     urgencyThreshold: 'critical',
-    simulatedAadhaarMasked: 'XXXX-XXXX-1355 (Simulated e-KYC)'
+    simulatedAadhaarMasked: 'XXXX-XXXX-1355',
+    dateOfBirth: '1988-11-04',
+    kycStatus: 'verified',
+    idType: 'aadhaar'
   },
   'usr-patient-1': {
     userId: 'usr-patient-1',
@@ -145,7 +162,10 @@ export const INITIAL_DONOR_PROFILES: Record<string, DonorProfile> = {
     badges: [],
     notificationRadiusKm: 15,
     urgencyThreshold: 'standard',
-    simulatedAadhaarMasked: 'XXXX-XXXX-9281 (Simulated e-KYC)'
+    simulatedAadhaarMasked: 'XXXX-XXXX-9281',
+    dateOfBirth: '1995-10-12',
+    kycStatus: 'verified',
+    idType: 'aadhaar'
   }
 };
 
@@ -1311,3 +1331,106 @@ export const REGIONAL_HEATMAP_DATA = [
   { region: 'Gurugram & Manesar', deficitLevel: 'medium', deficitPercent: 21, primaryNeed: 'Platelets, O+', hospitalCount: 26 },
   { region: 'North West Delhi & Rohini', deficitLevel: 'high', deficitPercent: 31, primaryNeed: 'B+, FFP', hospitalCount: 16 }
 ];
+
+export const INITIAL_KYC_SUBMISSIONS: DonorKycSubmission[] = [
+  {
+    id: 'kyc-sub-1001',
+    donorId: 'usr-donor-1',
+    donorName: 'Vikram Malhotra',
+    donorEmail: 'vikram.m@example.com',
+    donorPhone: '+91 98765 43210',
+    bloodGroup: 'O-',
+    dateOfBirth: '1990-06-15',
+    idType: 'aadhaar',
+    idNumberMasked: 'XXXX-XXXX-4821',
+    documentFileName: 'aadhaar_front_vikram.pdf',
+    documentFileSize: 1420500,
+    documentFileType: 'application/pdf',
+    documentUrl: 'https://lifelink.storage.private/kyc/usr-donor-1/aadhaar.pdf',
+    status: 'verified',
+    submittedAt: '2026-04-10T11:20:00Z',
+    reviewedAt: '2026-04-10T14:15:00Z',
+    reviewedBy: 'Hospital Admin (Dr. Ananya Roy)'
+  },
+  {
+    id: 'kyc-sub-1002',
+    donorId: 'usr-donor-2',
+    donorName: 'Priya Nair',
+    donorEmail: 'priya.nair@example.com',
+    donorPhone: '+91 98223 88441',
+    bloodGroup: 'A+',
+    dateOfBirth: '1993-02-28',
+    idType: 'aadhaar',
+    idNumberMasked: 'XXXX-XXXX-9912',
+    documentFileName: 'priya_voter_id.jpg',
+    documentFileSize: 890400,
+    documentFileType: 'image/jpeg',
+    documentUrl: 'https://lifelink.storage.private/kyc/usr-donor-2/voter_id.jpg',
+    status: 'verified',
+    submittedAt: '2026-04-12T09:40:00Z',
+    reviewedAt: '2026-04-12T10:05:00Z',
+    reviewedBy: 'Hospital Admin (Dr. Ananya Roy)'
+  }
+];
+
+export const INITIAL_INSTITUTION_SUBMISSIONS: InstitutionVerificationSubmission[] = [
+  {
+    id: 'inst-verif-101',
+    institutionId: 'usr-hosp-1',
+    institutionName: 'Indraprastha Apollo Hospital',
+    institutionType: 'hospital',
+    licenseType: 'nabh',
+    licenseNumber: 'NABH-DL-2024-88',
+    nodalOfficerName: 'Dr. Ananya Roy',
+    nodalOfficerPhone: '+91 11 2692 5858',
+    nodalOfficerDesignation: 'Chief Medical Officer / Transfusion Head',
+    documentFileName: 'apollo_nabh_accreditation.pdf',
+    documentFileSize: 2450000,
+    documentFileType: 'application/pdf',
+    documentUrl: 'https://lifelink.storage.private/licenses/apollo_nabh.pdf',
+    verificationStatus: 'verified',
+    submittedAt: '2026-03-01T10:00:00Z',
+    reviewedAt: '2026-03-02T15:30:00Z',
+    reviewedBy: 'Platform Directorate (Dr. Sharma)'
+  },
+  {
+    id: 'inst-verif-102',
+    institutionId: 'usr-bb-1',
+    institutionName: 'Indian Red Cross Society Blood Centre',
+    institutionType: 'bloodbank',
+    licenseType: 'cdsco',
+    licenseNumber: 'CDSCO-LIC-DL-001',
+    nodalOfficerName: 'Dr. Rajiv Malhotra',
+    nodalOfficerPhone: '+91 11 2371 6441',
+    nodalOfficerDesignation: 'Blood Centre Director',
+    documentFileName: 'red_cross_cdsco_form28c.pdf',
+    documentFileSize: 1890000,
+    documentFileType: 'application/pdf',
+    documentUrl: 'https://lifelink.storage.private/licenses/red_cross_cdsco.pdf',
+    verificationStatus: 'verified',
+    submittedAt: '2026-03-05T11:20:00Z',
+    reviewedAt: '2026-03-06T09:45:00Z',
+    reviewedBy: 'Platform Directorate (Dr. Sharma)'
+  },
+  {
+    id: 'inst-verif-103',
+    institutionId: 'usr-ngo-1',
+    institutionName: 'Rotary Life Foundation India',
+    institutionType: 'ngo',
+    licenseType: 'darpan_ngo',
+    licenseNumber: 'DARPAN-DL-98214',
+    nodalOfficerName: 'Kabir Mehra',
+    nodalOfficerPhone: '+91 99990 12345',
+    nodalOfficerDesignation: 'Executive Coordinator',
+    documentFileName: 'rotary_darpan_registration.pdf',
+    documentFileSize: 1120000,
+    documentFileType: 'application/pdf',
+    documentUrl: 'https://lifelink.storage.private/licenses/rotary_darpan.pdf',
+    verificationStatus: 'verified',
+    submittedAt: '2026-03-10T14:10:00Z',
+    reviewedAt: '2026-03-11T12:00:00Z',
+    reviewedBy: 'Platform Directorate (Dr. Sharma)'
+  }
+];
+
+

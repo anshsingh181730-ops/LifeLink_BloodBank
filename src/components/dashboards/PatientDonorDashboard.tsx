@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { 
   Users, Heart, Award, Check, X, MapPin, Clock, 
   Sparkles, CheckCircle2, Sliders, Plus, Activity, 
-  ArrowRight, RefreshCw, FileText, Navigation
+  ArrowRight, RefreshCw, FileText, Navigation, AlertCircle, ShieldCheck, LogOut
 } from 'lucide-react';
 import { Location } from '../../types';
 import { captureBrowserLocation } from '../../services/locationService';
@@ -18,24 +18,29 @@ export const PatientDonorDashboard: React.FC = () => {
   const { 
     currentUser, donorProfiles, toggleDonorAvailability, requests, 
     acceptMatch, declineMatch, impactNotifications, setIsEmergencyModalOpen,
-    selectedRequestId, setSelectedRequestId, setActiveUser, t 
+    selectedRequestId, setSelectedRequestId, setActiveUser, kycSubmissions,
+    setIsDonorRegistrationModalOpen, t, users, signOutDonor
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'requests' | 'donor'>('requests');
   const [responseTimer, setResponseTimer] = useState<number>(45);
 
-  const profile = donorProfiles[currentUser.id] || donorProfiles['usr-donor-1'] || {
+  const profile = donorProfiles[currentUser.id] || (currentUser.id === 'usr-donor-1' ? donorProfiles['usr-donor-1'] : undefined) || {
     userId: currentUser.id,
     bloodGroup: 'O+',
-    isAvailable: true,
-    lastDonationDate: '2026-06-15',
-    reliabilityScore: 94,
-    totalDonations: 1,
-    badges: ['Bronze Donor', 'Registered Lifesaver'],
+    isAvailable: currentUser.kycStatus === 'verified',
+    lastDonationDate: '',
+    reliabilityScore: 50,
+    totalDonations: 0,
+    badges: currentUser.kycStatus === 'verified' ? ['Verified Lifesaver'] : ['Pending KYC Verification'],
     notificationRadiusKm: 15,
     urgencyThreshold: 'standard',
-    simulatedAadhaarMasked: 'XXXX-XXXX-8921 (Simulated)'
+    simulatedAadhaarMasked: 'XXXX-XXXX-****'
   };
+
+  const userKycSubmission = kycSubmissions.find(s => s.donorId === currentUser.id);
+  const currentKycStatus = profile.kycStatus || currentUser.kycStatus || 'verified';
+  const hasDonationHistory = profile.totalDonations > 0 && currentKycStatus === 'verified';
 
   const donorLocation: Location = profile.currentLocation || currentUser.location || {
     address: 'Hauz Khas, New Delhi',
@@ -46,6 +51,7 @@ export const PatientDonorDashboard: React.FC = () => {
   };
 
   const handleToggleWithLocation = async () => {
+    if (currentKycStatus !== 'verified') return;
     if (!profile.isAvailable) {
       // Turning ON: prompt/capture current location
       try {
@@ -60,8 +66,6 @@ export const PatientDonorDashboard: React.FC = () => {
       toggleDonorAvailability(currentUser.id);
     }
   };
-
-  const hasDonationHistory = profile.totalDonations > 0;
 
   // Requests raised by or relevant to this user
   const userRequests = requests.filter(r => 
@@ -157,7 +161,39 @@ export const PatientDonorDashboard: React.FC = () => {
                   {profile.simulatedAadhaarMasked || 'XXXX-XXXX-4821 (Simulated e-KYC)'}
                 </span>
 
-                {hasDonationHistory ? (
+                {currentKycStatus === 'pending' ? (
+                  <span style={{
+                    background: '#FEF3C7',
+                    color: '#B45309',
+                    border: '1px solid #FCD34D',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: 'var(--radius-sm)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}>
+                    <Clock size={12} />
+                    Pending KYC Verification
+                  </span>
+                ) : currentKycStatus === 'rejected' ? (
+                  <span style={{
+                    background: '#FEE2E2',
+                    color: '#B91C1C',
+                    border: '1px solid #FECACA',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: 'var(--radius-sm)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}>
+                    <X size={12} />
+                    KYC Verification Rejected
+                  </span>
+                ) : hasDonationHistory ? (
                   <span className="priority-verified-donor-badge" title="Has verified blood donation history on LifeLink">
                     <Award size={13} color="#D97706" />
                     Verified Donor ({profile.totalDonations} Donations • Priority Active)
@@ -199,34 +235,49 @@ export const PatientDonorDashboard: React.FC = () => {
                 <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', lineHeight: 1.1 }}>
                   Donor Status
                 </span>
-                <strong style={{ fontSize: '0.8rem', color: profile.isAvailable ? '#10B981' : 'var(--text-secondary)' }}>
-                  {profile.isAvailable ? 'Available to Donate' : 'Unavailable'}
+                <strong style={{ 
+                  fontSize: '0.8rem', 
+                  color: currentKycStatus === 'pending' ? '#D97706' : currentKycStatus === 'rejected' ? '#DC2626' : profile.isAvailable ? '#10B981' : 'var(--text-secondary)' 
+                }}>
+                  {currentKycStatus === 'pending' 
+                    ? 'Verification Pending' 
+                    : currentKycStatus === 'rejected' 
+                    ? 'KYC Rejected' 
+                    : profile.isAvailable ? 'Available to Donate' : 'Unavailable'}
                 </strong>
               </div>
 
               <button
                 type="button"
                 id="portal-toggle-donor-availability"
-                onClick={handleToggleWithLocation}
+                disabled={currentKycStatus !== 'verified'}
+                onClick={currentKycStatus === 'verified' ? handleToggleWithLocation : undefined}
                 style={{
                   width: 44,
                   height: 24,
                   borderRadius: 'var(--radius-full)',
-                  background: profile.isAvailable ? '#10B981' : '#CBD5E1',
+                  background: currentKycStatus !== 'verified' ? '#E2E8F0' : profile.isAvailable ? '#10B981' : '#CBD5E1',
                   position: 'relative',
                   padding: 2,
                   border: 'none',
-                  cursor: 'pointer'
+                  cursor: currentKycStatus !== 'verified' ? 'not-allowed' : 'pointer',
+                  opacity: currentKycStatus !== 'verified' ? 0.6 : 1
                 }}
                 aria-label="Toggle donor availability"
-                title={profile.isAvailable ? 'Click to pause donor alerts' : 'Click to activate donor availability'}
+                title={
+                  currentKycStatus === 'pending' 
+                    ? 'Donor availability is locked until government KYC verification is approved by clinical staff.'
+                    : currentKycStatus === 'rejected'
+                    ? 'KYC verification was rejected. Please resubmit your identification document.'
+                    : profile.isAvailable ? 'Click to pause donor alerts' : 'Click to activate donor availability'
+                }
               >
                 <div style={{
                   width: 20,
                   height: 20,
                   borderRadius: '50%',
                   background: '#FFFFFF',
-                  transform: profile.isAvailable ? 'translateX(20px)' : 'translateX(0)',
+                  transform: (profile.isAvailable && currentKycStatus === 'verified') ? 'translateX(20px)' : 'translateX(0)',
                   transition: 'transform 0.2s ease',
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)'
                 }} />
@@ -243,6 +294,31 @@ export const PatientDonorDashboard: React.FC = () => {
             >
               <Plus size={16} />
               <span>{t.emergency.requestBloodNow}</span>
+            </button>
+
+            {/* Portal Sign Out Button */}
+            <button
+              type="button"
+              id="btn-donor-portal-signout"
+              onClick={signOutDonor}
+              style={{
+                fontSize: '0.86rem',
+                padding: '0.65rem 1.15rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                background: '#FFFFFF',
+                border: '1px solid #FECACA',
+                borderRadius: 'var(--radius-md)',
+                color: '#DC2626',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              title="Sign out of donor account and return to public landing page"
+            >
+              <LogOut size={16} color="#DC2626" />
+              <span>Sign Out</span>
             </button>
           </div>
         </div>
@@ -263,7 +339,7 @@ export const PatientDonorDashboard: React.FC = () => {
             <span>Interactive Demo Account Switcher:</span>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <button
               type="button"
               id="btn-switch-account-vikram"
@@ -307,9 +383,141 @@ export const PatientDonorDashboard: React.FC = () => {
               <Users size={13} color="#2563EB" />
               <span>Rahul Varma (Standard User: 0 Donations • Normal Queue)</span>
             </button>
+
+            {(() => {
+              const registeredDonor = users.find(u => (u.role === 'patient' || u.role === 'donor') && u.id !== 'usr-donor-1' && u.id !== 'usr-patient-1');
+              if (!registeredDonor) return null;
+              const isSelected = currentUser.id === registeredDonor.id;
+              const statusText = (donorProfiles[registeredDonor.id]?.kycStatus || registeredDonor.kycStatus || 'pending').toUpperCase();
+              return (
+                <button
+                  type="button"
+                  id="btn-switch-account-custom-donor"
+                  onClick={() => setActiveUser(registeredDonor.id)}
+                  style={{
+                    padding: '0.3rem 0.75rem',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: '0.76rem',
+                    fontWeight: 700,
+                    border: isSelected ? '1px solid #0D47A1' : '1px solid var(--border-subtle)',
+                    background: isSelected ? '#EFF6FF' : '#F8FAFC',
+                    color: isSelected ? '#0D47A1' : 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}
+                >
+                  <ShieldCheck size={13} color="#0D47A1" />
+                  <span>{registeredDonor.name} (Live Registered Donor • {statusText})</span>
+                </button>
+              );
+            })()}
           </div>
         </div>
       </div>
+
+      {/* Amber Banner if Pending KYC Verification */}
+      {currentKycStatus === 'pending' && (
+        <div style={{
+          background: '#FFFBEB',
+          border: '1px solid #FCD34D',
+          borderLeft: '4px solid #F59E0B',
+          borderRadius: 'var(--radius-md)',
+          padding: '1rem 1.25rem',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0.85rem'
+        }}>
+          <Clock size={20} color="#D97706" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <strong style={{ color: '#92400E', fontSize: '0.88rem' }}>
+                Pending Government e-KYC Verification
+              </strong>
+              <span style={{
+                background: '#FEF3C7',
+                color: '#92400E',
+                border: '1px solid #FDE68A',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                padding: '0.1rem 0.5rem',
+                borderRadius: 'var(--radius-full)'
+              }}>
+                Under Clinical Staff Audit
+              </span>
+            </div>
+            <span style={{ color: '#B45309', fontSize: '0.82rem', lineHeight: '1.45', display: 'block', marginTop: '0.25rem' }}>
+              Your registered government ID is currently queued for audit. To protect patient safety and prevent fake broadcasts, voluntary donor availability dispatch and verified donor priority matching are paused until verification is complete.
+            </span>
+            {userKycSubmission && (
+              <div style={{ marginTop: '0.45rem', fontSize: '0.76rem', color: '#78350F', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <span>Document: <strong>{userKycSubmission.documentFileName}</strong></span>
+                <span>ID: <strong>{userKycSubmission.idNumberMasked}</strong> ({userKycSubmission.idType.toUpperCase()})</span>
+                <span>Submitted: <strong>{new Date(userKycSubmission.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}, {new Date(userKycSubmission.submittedAt).toLocaleDateString()}</strong></span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Red Banner if KYC Rejected with Resubmit Action */}
+      {currentKycStatus === 'rejected' && (
+        <div style={{
+          background: '#FEF2F2',
+          border: '1px solid #FECACA',
+          borderLeft: '4px solid #DC2626',
+          borderRadius: 'var(--radius-md)',
+          padding: '1rem 1.25rem',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0.85rem'
+        }}>
+          <AlertCircle size={20} color="#DC2626" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <strong style={{ color: '#991B1B', fontSize: '0.88rem' }}>
+                KYC Verification Rejected
+              </strong>
+              <span style={{
+                background: '#FEE2E2',
+                color: '#991B1B',
+                border: '1px solid #FCA5A5',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                padding: '0.1rem 0.5rem',
+                borderRadius: 'var(--radius-full)'
+              }}>
+                Action Required
+              </span>
+            </div>
+            <span style={{ color: '#B91C1C', fontSize: '0.82rem', lineHeight: '1.45', display: 'block', marginTop: '0.25rem' }}>
+              Rejection Reason: <strong>{userKycSubmission?.rejectionReason || 'Uploaded document was unreadable, mismatched, or expired.'}</strong>
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsDonorRegistrationModalOpen(true)}
+              style={{
+                marginTop: '0.6rem',
+                background: '#DC2626',
+                color: '#FFFFFF',
+                border: 'none',
+                padding: '0.4rem 0.95rem',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              <span>Resubmit Government ID Document</span>
+              <ArrowRight size={13} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Two-Tab Navigation Bar */}
       <div className="portal-tab-bar" role="tablist">

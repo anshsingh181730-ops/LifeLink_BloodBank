@@ -34,6 +34,100 @@ export interface Location {
   timestamp?: number;
 }
 
+export type KycStatus = 'pending' | 'verified' | 'rejected';
+
+export type GovIdType = 'aadhaar' | 'voter_id' | 'passport' | 'driving_license';
+
+export interface DonorKycSubmission {
+  id: string;
+  donorId: string;
+  donorName: string;
+  donorEmail: string;
+  donorPhone: string;
+  bloodGroup: BloodGroup;
+  dateOfBirth: string;
+  idType: GovIdType;
+  idNumberMasked: string; // e.g. "XXXX-XXXX-4821"
+  documentFileName: string;
+  documentFileSize: number; // bytes
+  documentFileType: string; // mime type
+  documentUrl: string; // Expiring / restricted view URL
+  status: KycStatus;
+  submittedAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  rejectionReason?: string;
+}
+
+export interface DonorRegistrationInput {
+  name: string;
+  phone: string;
+  email: string;
+  password?: string;
+  bloodGroup: BloodGroup;
+  dateOfBirth: string;
+  location: Location;
+  idType: GovIdType;
+  idNumber: string;
+  documentFile: {
+    name: string;
+    size: number;
+    type: string;
+    dataUrl: string;
+  };
+}
+
+export type InstitutionType = 'hospital' | 'bloodbank' | 'ngo';
+
+export type InstitutionLicenseType = 
+  | 'nabh' 
+  | 'cdsco' 
+  | 'state_transfusion_council' 
+  | 'darpan_ngo' 
+  | 'clinical_establishment';
+
+export interface InstitutionVerificationSubmission {
+  id: string;
+  institutionId: string;
+  institutionName: string;
+  institutionType: InstitutionType;
+  licenseType: InstitutionLicenseType;
+  licenseNumber: string;
+  nodalOfficerName: string;
+  nodalOfficerPhone: string;
+  nodalOfficerDesignation: string;
+  documentFileName: string;
+  documentFileSize: number;
+  documentFileType: string;
+  documentUrl: string;
+  verificationStatus: KycStatus;
+  submittedAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  rejectionReason?: string;
+}
+
+export interface InstitutionRegistrationInput {
+  role: InstitutionType;
+  institutionName: string;
+  city: string;
+  address: string;
+  nodalOfficerName: string;
+  nodalOfficerPhone: string;
+  nodalOfficerDesignation: string;
+  officerDateOfBirth: string;
+  email: string;
+  password?: string;
+  licenseType: InstitutionLicenseType;
+  licenseNumber: string;
+  documentFile: {
+    name: string;
+    size: number;
+    type: string;
+    dataUrl: string;
+  };
+}
+
 export interface User {
   id: string;
   role: Role;
@@ -46,6 +140,8 @@ export interface User {
   institutionName?: string;
   licenseNumber?: string;
   verificationStatus: 'pending' | 'verified' | 'rejected';
+  dateOfBirth?: string;
+  kycStatus?: KycStatus;
 }
 
 export interface DonorProfile {
@@ -58,9 +154,13 @@ export interface DonorProfile {
   badges: string[];
   notificationRadiusKm: number;
   urgencyThreshold: UrgencyLevel;
-  simulatedAadhaarMasked: string; // e.g. "XXXX-XXXX-4821 (Simulated)"
+  simulatedAadhaarMasked: string; // e.g. "XXXX-XXXX-4821"
   currentLocation?: Location;
   locationUpdatedAt?: string;
+  dateOfBirth?: string;
+  kycStatus?: KycStatus;
+  kycSubmissionId?: string;
+  idType?: GovIdType;
 }
 
 export interface BloodRequest {
